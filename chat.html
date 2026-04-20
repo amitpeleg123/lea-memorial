@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>שאל שאלות וקבל תשובות</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #1a0a0a;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 120px;
+    }
+
+    .back {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      color: #c47d8a;
+      text-decoration: none;
+      font-size: .95rem;
+      transition: color .2s;
+    }
+    .back:hover { color: #e8b4bc; }
+
+    h1 {
+      font-size: 2rem;
+      color: #e8b4bc;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #c47d8a;
+      font-size: .95rem;
+      margin-bottom: 32px;
+      font-weight: 300;
+    }
+
+    /* חלון צ'אט */
+    #chat-window {
+      width: 100%;
+      max-width: 600px;
+      background: #0e0404;
+      border: 1.5px solid #3d0c14;
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 400px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    /* בועת הודעה */
+    .bubble {
+      max-width: 80%;
+      padding: 12px 18px;
+      border-radius: 16px;
+      line-height: 1.6;
+      font-size: .95rem;
+    }
+
+    .bubble.lea {
+      background: linear-gradient(135deg, #3d0c14, #2a0810);
+      border: 1px solid #7b1e2e;
+      color: #f0e0d6;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .bubble.lea .name {
+      font-size: .75rem;
+      color: #c47d8a;
+      margin-bottom: 4px;
+      font-weight: 700;
+      display: none;
+    }
+
+    .bubble.user {
+      background: #2a1a1a;
+      border: 1px solid #3d0c14;
+      color: #e8b4bc;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    /* שדה קלט */
+    .input-row {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      gap: 10px;
+      padding: 16px 20px;
+      background: #1a0a0a;
+      border-top: 1px solid #3d0c14;
+    }
+
+    #msg-input {
+      flex: 1;
+      background: #0e0404;
+      border: 1.5px solid #7b1e2e;
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      font-size: .95rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    #msg-input:focus { border-color: #c47d8a; }
+    #msg-input::placeholder { color: #5a1e28; }
+
+    #send-btn {
+      background: linear-gradient(135deg, #7b1e2e, #3d0c14);
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      color: #e8b4bc;
+      font-family: 'Heebo', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .2s;
+    }
+    #send-btn:hover { opacity: .85; }
+  </style>
+</head>
+<body>
+
+  <a class="back" href="meet-lea.html">← חזרה</a>
+
+  <h1>💬 שאל שאלות וקבל תשובות</h1>
+  <p class="subtitle">שאל/י כל דבר על לאה</p>
+
+  <div id="chat-window"></div>
+
+  <div class="input-row">
+    <input id="msg-input" type="text" placeholder="כתוב/י שאלה..." autocomplete="off" />
+    <button id="send-btn">שלח</button>
+  </div>
+
+  <script>
+    const API_KEY = 'AIzaSyCTcbJH95s6DMSc9WGRaVIpeRfup2njJzE';
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`;
+
+    const SYSTEM_PROMPT = `אתה עוזר לענות על שאלות על לאה פלג ז"ל, סבתא אהובה שנפטרה.
+ענה בעברית בלבד, בצורה חמה, קצרה ומכבדת.
+אם שואלים שאלות כמו "היי" או "שלום" — ענה בברכה חמה ושאל מה הם רוצים לדעת על לאה.
+אם שואלים על פרטים ספציפיים שאינך יודע — אמור בחמימות שהפרטים יתווספו בקרוב.
+אל תמציא עובדות על לאה.
+
+מידע על לאה פלג ז"ל:
+- נולדה ב-17/09/1935, נפטרה ב-04/04/2026 בגיל 90.5. ברוך השם הייתה צלולה לחלוטין עד יומה האחרון ונפטרה בסיבה טובה.
+- המאכלים שהיא אהבה להכין: קובה מטוגן ולזניה של סבתא.
+- יש לה 3 בנים:
+  1. עדי — הבן הגדול, נשוי לקטי. יש להם 3 ילדים: גד (הנכד הבכור של לאה, גר ברומא), ליהי (הבינונית, מאורסת ליאן — חתונה במאי), וענב (הקטן).
+  2. ערן — הבן האמצעי, נשוי לענת. יש להם 2 ילדים: מעיין (הגדולה) ואפיק (הקטן — מצחיק, מלך, מבין בקלאוד קוד ועוזר לבניית אתר הזיכרון הזה).
+  3. עופר — הבן הקטן, נשוי לעילית. יש להם 3 ילדים: עילי (הגדול, כרגע בדרום אמריקה עד יוני 2025), עלמה (הבינונית), ועמית (נכד הזקונים של לאה — הוא בנה את אתר הזיכרון הזה).
+
+חשוב במיוחד: אם שואלים על מעיין — תגיד שעמית עומר שהיא מלכה! (היא גם סידרה לו את החדר והוא מסודר עכשיו)`;
+
+    const chatWindow = document.getElementById('chat-window');
+
+    function addBubble(text, who) {
+      const div = document.createElement('div');
+      div.className = `bubble ${who}`;
+      if (who === 'lea') {
+        div.innerHTML = `<div class="name">לאה ז״ל</div>${text}`;
+      } else {
+        div.textContent = text;
+      }
+      chatWindow.appendChild(div);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+      return div;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('msg-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      document.getElementById('send-btn').disabled = true;
+
+      addBubble(text, 'user');
+
+      const typingBubble = addBubble('...', 'lea');
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{ text: SYSTEM_PROMPT + '\n\nשאלה: ' + text }]
+            }]
+          })
+        });
+        const data = await res.json();
+        const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || 'מצטער, לא הצלחתי להתחבר. נסה שוב.';
+        typingBubble.innerHTML = `<div class="name">לאה ז״ל</div>${answer}`;
+      } catch (e) {
+        typingBubble.innerHTML = `<div class="name">לאה ז״ל</div>שגיאת חיבור, נסה שוב 🕯️`;
+      }
+
+      document.getElementById('send-btn').disabled = false;
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    document.getElementById('send-btn').addEventListener('click', sendMessage);
+    document.getElementById('msg-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    setTimeout(() => addBubble('שאל/י כל שאלה על לאה — על הילדות, המשפחה, הבישולים ועוד 🕯️', 'lea'), 400);
+  </script>
+
+</body>
+</html>

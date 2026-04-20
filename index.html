@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>לאה פלג ז״ל</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #1a0a0a;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .candle {
+      font-size: 2.5rem;
+      animation: flicker 2s infinite alternate;
+      margin-bottom: 20px;
+    }
+
+    @keyframes flicker {
+      from { opacity: 1; transform: scale(1); }
+      to   { opacity: 0.7; transform: scale(0.95); }
+    }
+
+    h1 {
+      font-size: 3.2rem;
+      color: #e8b4bc;
+      text-align: center;
+      letter-spacing: 3px;
+      text-shadow: 0 2px 20px #7b1e2e88;
+      margin-bottom: 12px;
+    }
+
+    .dates {
+      color: #c47d8a;
+      font-size: 1rem;
+      text-align: center;
+      font-style: italic;
+      margin-bottom: 60px;
+      letter-spacing: 1px;
+    }
+
+    .cards {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0 20px;
+    }
+
+    .card {
+      width: 220px;
+      height: 220px;
+      border: 2px solid #7b1e2e;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #3d0c14, #2a0810);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      color: #f0e0d6;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      box-shadow: 0 4px 20px #00000055;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 36px #7b1e2e55;
+      border-color: #c47d8a;
+    }
+
+    .card-icon { font-size: 2.4rem; }
+
+    .card-text {
+      font-size: 1.1rem;
+      text-align: center;
+      color: #e8b4bc;
+      line-height: 1.5;
+      padding: 0 12px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 20px;
+      color: #5a1e28;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="candle">🕯️</div>
+  <h1>לאה פלג ז״ל</h1>
+  <p class="dates">י״ז אלול תרצ״ה — י״ו ניסן תשפ״ו</p>
+  <p class="dates">17.09.1935 — 04.04.2026</p>
+
+  <div class="cards">
+    <a class="card" href="meet-lea.html">
+      <span class="card-icon">✡️</span>
+      <span class="card-text">הכר את לאה</span>
+    </a>
+    <a class="card" href="dedications.html">
+      <span class="card-icon">💌</span>
+      <span class="card-text">קרא את ההקדשות מהחברים והמשפחה</span>
+    </a>
+  </div>
+
+  <footer>לזכר נשמתה הטהורה ✦</footer>
+
+</body>
+</html>

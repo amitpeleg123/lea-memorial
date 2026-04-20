@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>הקדשות</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #1a0a0a; color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; padding: 60px 20px;
+    }
+    .back { position:fixed; top:20px; right:24px; color:#c47d8a; text-decoration:none; font-size:.95rem; }
+    .back:hover { color:#e8b4bc; }
+    h1 { font-size:2rem; color:#e8b4bc; margin-bottom:8px; font-weight:700; }
+    .subtitle { color:#c47d8a; font-size:.95rem; margin-bottom:40px; }
+    .grid-wrap { overflow-x:auto; margin-bottom:40px; }
+    table { border-collapse:collapse; direction:rtl; }
+    td { width:46px; height:46px; background:#0e0404; padding:0; border:none; }
+    td.w {
+      background:#fdf0f0; border:1px solid #c8a0a8;
+      text-align:center; font-size:1.2rem; font-weight:700; color:#3d0c14;
+      position:relative; cursor:pointer; transition:background .15s;
+    }
+    td.w:hover { background:#f5c8ce; }
+    td.w.lit { background:#e8a0aa; }
+    .cnum { position:absolute; top:2px; right:3px; font-size:.5rem; color:#7b1e2e; font-weight:700; }
+    .names-grid { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:700px; margin-bottom:20px; }
+    .name-btn {
+      padding:10px 22px;
+      background:linear-gradient(135deg,#3d0c14,#2a0810);
+      border:1.5px solid #7b1e2e; border-radius:8px;
+      color:#e8b4bc; font-family:'Heebo',sans-serif;
+      font-size:1rem; font-weight:700; cursor:pointer; transition:all .15s;
+    }
+    .name-btn:hover, .name-btn.active { background:#7b1e2e; color:#fdf0f0; border-color:#e8b4bc; }
+    .modal { display:none; position:fixed; inset:0; background:#000b; z-index:100; align-items:center; justify-content:center; padding:20px; }
+    .modal.open { display:flex; }
+    .modal-box {
+      background:linear-gradient(135deg,#3d0c14,#2a0810);
+      border:2px solid #7b1e2e; border-radius:14px;
+      padding:40px; max-width:460px; width:100%;
+      position:relative; box-shadow:0 8px 40px #00000099; text-align:center;
+    }
+    .modal-name { font-size:2rem; color:#e8b4bc; font-weight:900; margin-bottom:20px; }
+    .modal-ded { color:#f0e0d6; line-height:1.9; font-size:1rem; font-style:italic; }
+    .close-btn { position:absolute; top:14px; left:14px; background:none; border:none; color:#c47d8a; font-size:1.5rem; cursor:pointer; }
+    footer { margin-top:40px; color:#5a1e28; font-size:.8rem; }
+  </style>
+</head>
+<body>
+
+<a class="back" href="index.html">→ חזרה</a>
+<h1>הקדשות</h1>
+<p class="subtitle">לחצו על שם כדי לקרוא את ההקדשה</p>
+
+<div style="margin-bottom: 32px;">
+  <a href="dedications-list.html" style="
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #3d0c14, #2a0810);
+    border: 1.5px solid #7b1e2e; border-radius: 10px;
+    color: #e8b4bc; font-family: 'Heebo', sans-serif;
+    font-size: 1rem; font-weight: 700; text-decoration: none;
+    transition: border-color .2s, box-shadow .2s;
+  " onmouseover="this.style.borderColor='#c47d8a';this.style.boxShadow='0 4px 20px #7b1e2e55'"
+     onmouseout="this.style.borderColor='#7b1e2e';this.style.boxShadow='none'">
+    📋 ראו את כל ההקדשות ברשימה
+  </a>
+</div>
+
+<div class="grid-wrap"><table id="tbl"></table></div>
+<div class="names-grid" id="names"></div>
+<footer>לזכר נשמתה הטהורה ✦</footer>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div class="modal-name" id="mname"></div>
+    <div class="modal-ded" id="mded"></div>
+  </div>
+</div>
+
+<script>
+// גריד LTR פנימי, dir=rtl על הטבלה → col=0 מוצג ימינה
+// across: col גדל = שמאל בתצוגה → תו ראשון של מילה = col נמוך = ימין בתצוגה ✓
+// down: row גדל = למטה ✓
+
+// חיבורים:
+// עופר+עמית: ע משותף r0c2
+// עדי+ענת:   ע משותף r0c8
+// עלמה+עמית: מ משותף r1c2
+// ענב+ענת:   נ משותף r1c8
+// עילית+מעיין: ע משותף r4c1
+// עילי+עילית: י משותף r5c1
+// ליהי+עילית: ל משותף r6c1
+// אפיק+ענת:  לא — אפיק עצמאי
+// קטי+ערן:   עצמאי קרוב
+// גלי+עילית: י משותף r8c1
+
+// תשבץ לפי תמונה מקורית — ספירת תאים מדויקת
+// RTL: col=0 הוא ימין ביותר בתצוגה
+//
+// צמתים:
+//   מעיין∩עמית∩עילית: ע r2c5
+//   עלמה∩ליהי: ל r3c9
+//   עילית∩ליהי: י r3c5 (ליהי[3]=י, עילית[1]=י) — ליהי: ל r3c9,י r3c8,ה r3c7,י r3c6? אבל עילית[1]=י ב-r3c5
+//     → ליהי (A) r3c5: ל r3c5? ל≠י של עילית — ליהי מתחיל ב-ל, עילית[1]=י ב-r3c5
+//     → ליהי צריך שה-י השני שלו (ליהי[1]) יפגוש עילית[1]=י@r3c5
+//     → ליהי (A): ל r3c6, י r3c5, ה r3c4, י r3c3 — dir=A מגדיל col, אז ל בcol הקטן: ל r3c6,י r3c7,ה r3c8,י r3c9
+//     → אבל dir=A: col גדל, ותצוגה RTL הופכת → col קטן = ימין. ליהי[0]=ל בcol הימני ביותר
+//     → ליהי (A) r3c6: ל r3c6, י r3c7, ה r3c8, י r3c9 — עלמה ל@r3c9? ל≠י. ל@r2c9=ע של עלמה
+//     → עלמה (D) r2c9: ע,ל,מ,ה → ל r3c9. ליהי[3]=י ≠ ל. ליהי אחרת
+//     → ליהי (A) r3c9: ל r3c9,י r3c10,ה r3c11,י r3c12 — ל חופף עלמה ל@r3c9 ✓; עילית[1]=י@r3c5 — לא חופף
+//     → עילית (D) r2c5: ע,י,ל,י,ת → י@r3c5. ליהי צריך י בr3c5: ליהי[1]=י → ליהי[0]=ל@r3c4
+//     → ליהי (A) r3c4: ל r3c4,י r3c5,ה r3c6,י r3c7 — י@r3c5 חופף עילית ✓, אבל ל@r3c4 לא חופף עלמה
+//     מהתמונה ליהי ועלמה מחוברים (ל של ליהי = ל של עלמה):
+//     → עלמה (D) r2c4+1=r3c4=ל? עלמה (D) r2c4: ע r2c4... אבל r2c4 = ע של עמית/עילית/מעיין!
+//     → עלמה חייבת להיות בעמודה אחרת. מהתמונה עלמה (2) נמצאת ימינה מ-עמית.
+//     → עלמה (D) r2c9: ע,ל,מ,ה. ליהי (A) r3c4: ל,י,ה,י — ל@r3c4, עלמה ל@r3c9 — לא חופפים
+//     → מהתמונה 4=ל (ליהי) נמצא ממש ליד 2=ע (עלמה), ל של ליהי = ל של עלמה:
+//        עלמה (D) r2c9: ע@r2c9, ל@r3c9, מ@r4c9, ה@r5c9
+//        ליהי (A) r3c9: ל@r3c9, י@r3c8, ה@r3c7, י@r3c6 ← ל חופף עלמה ✓, י@r3c6 — לא חופף עילית@r3c5
+//     → מסקנה: ליהי ועילית לא חופפים! הם שני חלקים נפרדים בתשבץ
+//   עילית∩ענת∩ענב: ת/ע r6c5 — עילית ת@r6c5, ענת+ענב מתחילים ע — ע≠ת → לא אותו תא
+//     → ענת ענב מתחילים שורה אחת מתחת לעילית, עמודה אחרת
+//     מהתמונה ענת (6) נמצא מתחת לעילית ל/י, ובאותה שורה כמו ת של עילית
+//     → ענת (A) r6c6: ע,נ,ת; ענב (D) r6c6: ע,נ,ב
+//   עופר∩אפיק: פ — עופר (D) r4c1: ע,ו,פ,ר → פ@r6c1; אפיק (A) r6c0: א,פ,י,ק → פ@r6c1 ✓
+//   אפיק∩קטי: ק — אפיק ק@r6c3; קטי (D) r6c3: ק,ט,י ✓
+//   ערן∩עדי: ע — ערן (A) r7c4: ע,ר,נ; עדי (D) r7c4: ע,ד,י ✓
+//   ענב∩ערן: נ — ענב נ@r7c6; ערן נ@r7c6 ✓ (ערן: ע@r7c4,ר@r7c5,נ@r7c6)
+//   עדי∩עילי: י — עדי י@r9c4; עילי (A) r9c3: ע,י,ל,י → י@r9c4 ✓
+//   קטי∩ערן: ט — קטי ט@r7c3; ערן עובר r7c4,r7c5,r7c6 — לא חופף קטי. קטי עצמאי
+
+// צמתים מאושרים:
+// מעיין[2]=י @ r2c5 = עמית[2]=י @ r2c5  → מעיין r0c5, עמית r2c3
+// עילית[4]=ת @ r6c3 = ענת[2]=ת @ r6c3+2? → ענת (A) r6c1: ע@r6c1,נ@r6c2,ת@r6c3 + עילית (D) r2c3: ע,י,ל,י,ת → ת@r6c3 ✓
+// ענת[0]=ע @ r6c1 = ענב[0]=ע @ r6c1 → ענב (D) r6c1 ✓
+// עדי[2]=י @ r9cX = עילי[0]=ע @ r9cX → ע≠י! אי אפשר לחפוף ע עם י
+//   → עמית תכנן שעדי מסתיים י ועילי מתחיל ע באותו תא — זה לא אפשרי
+//   → כנראה עילי[1]=י חופף עדי[2]=י: עדי (D) r7c4: ע,ד,י → י@r9c4; עילי (A) r9c3: ע@r9c3,י@r9c4,ל@r9c5,י@r9c6 ✓
+// עופר[2]=פ @ r6c1 — אבל ענת ענב גם ב-r6c1! → עופר בעמודה אחרת
+//   → אפיק (A) r6c0: א@r6c0,פ@r6c1,י@r6c2,ק@r6c3; עופר פ@r6c1 = אפיק פ@r6c1 ✓ → עופר (D) r4c1
+//   אבל ענת/ענב גם ב-r6c1=ע — סתירה עם אפיק פ@r6c1
+//   → ענת ענב לא יכולים להיות ב-col1. עילית ת@r6c3, ענת (A) r6c3: ע@r6c3... ת≠ע?
+//   → עילית: ע@r2c3,י@r3c3,ל@r4c3,י@r5c3,ת@r6c3. ענת ו-ענב מתחילים ע@r6c3=ת של עילית — סתירה!
+//   → תיקון: ענת+ענב מתחילים שורה נפרדת: עילית ת@r6c3, ענת+ענב ע@r7c3
+//   → ענת (A) r7c3: ע,נ,ת; ענב (D) r7c3: ע,נ,ב
+//   → ערן+עדי: ע@r8c3? ערן (A) r8c3: ע,ר,נ; עדי (D) r8c3: ע,ד,י → י@r10c3
+//   → עילי (A) r10c2: ע@r10c2,י@r10c3,ל@r10c4,י@r10c5 → י@r10c3 = עדי י@r10c3 ✓
+
+// col מהעורך (LTR) → col האתר (RTL, COLS=14):
+//   מאונך:  col = 13 - col_עורך
+//   מאוזן:  col = 13 - (col_עורך + אורך - 1)  [כי col_עורך = תחילת המילה בLTR = סוף המילה בRTL]
+const PEOPLE = [
+  { name:"מעיין", dir:"D", row:1,  col:11, ded:"ההקדשה של מעיין תתווסף כאן..." }, // D: 13-2=11
+  { name:"עלמה",  dir:"D", row:3,  col:6,  ded:"ההקדשה של עלמה תתווסף כאן..." }, // D: 13-7=6
+  { name:"עמית",  dir:"A", row:3,  col:9,  ded:"ההקדשה של עמית תתווסף כאן..." }, // A: 13-(1+4-1)=9
+  { name:"עילית", dir:"D", row:3,  col:9,  ded:"ההקדשה של עילית תתווסף כאן..." }, // D: 13-4=9
+  { name:"ליהי",  dir:"A", row:4,  col:6,  ded:"ההקדשה של ליהי תתווסף כאן..." }, // A: 13-(4+4-1)=6
+  { name:"עופר",  dir:"D", row:6,  col:1,  ded:"ההקדשה של עופר תתווסף כאן..." }, // D: 13-12=1
+  { name:"ענת",   dir:"A", row:7,  col:7,  ded:"ההקדשה של ענת תתווסף כאן..." }, // A: 13-(4+3-1)=7
+  { name:"ענב",   dir:"D", row:7,  col:7,  ded:"ההקדשה של ענב תתווסף כאן..." }, // D: 13-6=7
+  { name:"אפיק",  dir:"A", row:8,  col:0,  ded:"ההקדשה של אפיק תתווסף כאן..." }, // A: 13-(10+4-1)=0
+  { name:"קטי",   dir:"D", row:8,  col:3,  ded:"ההקדשה של קטי תתווסף כאן..." }, // D: 13-10=3
+  { name:"ערן",   dir:"A", row:8,  col:5,  ded:"ההקדשה של ערן תתווסף כאן..." }, // A: 13-(6+3-1)=5... אבל ק של קטי ב-col3, אפיק ק ב-col3 ✓; ערן צריך לחפוף ענב נ
+  { name:"עדי",   dir:"D", row:8,  col:5,  ded:"ההקדשה של עדי תתווסף כאן..." }, // D: 13-8=5
+  { name:"עילי",  dir:"A", row:10, col:2,  ded:"ההקדשה של עילי תתווסף כאן..." }, // A: 13-(8+4-1)=2
+  { name:"גד",    dir:"D", row:8,  col:13, ded:"ההקדשה של גד תתווסף כאן..." }, // D: 13-0=13
+];
+
+const ROWS = 12, COLS = 14;
+const G = Array.from({length:ROWS}, ()=>Array(COLS).fill(null));
+
+PEOPLE.forEach(p => {
+  for (let i = 0; i < p.name.length; i++) {
+    const r = p.dir==='D' ? p.row+i : p.row;
+    const c = p.dir==='A' ? p.col+i : p.col;
+    if (r<ROWS && c<COLS) {
+      if (!G[r][c]) G[r][c] = {letter:p.name[i], people:[]};
+      if (!G[r][c].people.includes(p)) G[r][c].people.push(p);
+    }
+  }
+});
+
+// מספרים
+let num=1;
+const numbered=new Set();
+PEOPLE.forEach(p=>{
+  const key=`${p.row},${p.col}`;
+  if(!numbered.has(key)){
+    numbered.add(key);
+    if(G[p.row][p.col]){ G[p.row][p.col].num=num; p.num=num++; }
+  } else { p.num=G[p.row][p.col]?.num; }
+});
+
+// בנה טבלה
+const tbl=document.getElementById('tbl');
+const cellEls=Array.from({length:ROWS},()=>Array(COLS).fill(null));
+for(let r=0;r<ROWS;r++){
+  const tr=document.createElement('tr');
+  for(let c=0;c<COLS;c++){
+    const td=document.createElement('td');
+    const cd=G[r][c];
+    if(cd){
+      td.className='w';
+      td.textContent=cd.letter;
+      if(cd.num){ const sp=document.createElement('span'); sp.className='cnum'; sp.textContent=cd.num; td.appendChild(sp); }
+      if(cd.people.length) td.addEventListener('click',()=>{highlightPerson(cd.people[0]);openModal(cd.people[0]);});
+      cellEls[r][c]=td;
+    }
+    tr.appendChild(td);
+  }
+  tbl.appendChild(tr);
+}
+
+const namesEl=document.getElementById('names');
+PEOPLE.forEach(p=>{
+  const btn=document.createElement('button');
+  btn.className='name-btn'; btn.textContent=p.name;
+  btn.addEventListener('click',()=>{highlightPerson(p);openModal(p);});
+  namesEl.appendChild(btn);
+});
+
+let litCells=[];
+function highlightPerson(p){
+  litCells.forEach(el=>el.classList.remove('lit')); litCells=[];
+  document.querySelectorAll('.name-btn').forEach(b=>b.classList.remove('active'));
+  for(let i=0;i<p.name.length;i++){
+    const r=p.dir==='D'?p.row+i:p.row;
+    const c=p.dir==='A'?p.col+i:p.col;
+    if(cellEls[r]&&cellEls[r][c]){ cellEls[r][c].classList.add('lit'); litCells.push(cellEls[r][c]); }
+  }
+  document.querySelectorAll('.name-btn').forEach(b=>{ if(b.textContent===p.name) b.classList.add('active'); });
+}
+function openModal(p){
+  document.getElementById('mname').textContent=p.name;
+  document.getElementById('mded').textContent=p.ded;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+</script>
+</body>
+</html>
