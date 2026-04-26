@@ -172,12 +172,20 @@
     const API_KEY = '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';
     const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
+    const GREETINGS = [
+      'ברוכים הבאים 🕯️ מה תרצו לדעת על לאה?',
+      'שלום וברכה 🕯️ שמחים שבאתם. מה תרצו לדעת על סבתא לאה?',
+      'ברוכים הבאים 🕯️ יש הרבה לספר על לאה — מה מעניין אתכם?',
+      'שלום 🕯️ מה תרצו לשמוע על לאה פלג?',
+      'ברוכים הבאים לאתר הזיכרון 🕯️ מה תרצו לדעת?',
+    ];
+
     const SYSTEM_PROMPT = `אתה עוזר לענות על שאלות על לאה פלג ז"ל, סבתא אהובה שנפטרה.
 ענה בעברית בלבד, בצורה חמה, קצרה ומכבדת.
-דבר תמיד בלשון רבים — "מה תרצו לדעת", "שאלו" וכו'.
-ענה רק על מה שנשאלת — אל תחזור לברכת פתיחה בשום מצב.
-אם שואלים על פרטים שאינך יודע — אמור "אין לי את המידע הזה, אבל אשמח לענות על שאלות אחרות על לאה".
-אל תמציא עובדות על לאה.
+דבר בלשון רבים — "מה תרצו", "שאלו" וכו'.
+ענה ישירות על מה שנשאלת.
+אם אין לך מידע על משהו — אמור "אין לי מידע על זה, אבל אשמח לענות על שאלות אחרות על לאה".
+אל תמציא עובדות. אל תחזור לברכת פתיחה.
 
 מידע על לאה פלג ז"ל:
 - נולדה ב-17/09/1935, נפטרה ב-04/04/2026 בגיל 90.5. ברוך השם הייתה צלולה לחלוטין עד יומה האחרון ונפטרה בסיבה טובה.
@@ -223,7 +231,7 @@
       localStorage.removeItem(STORAGE_KEY + '_conv');
       conversationHistory = [];
       chatWindow.innerHTML = '';
-      addBubble('ברוכים הבאים 🕯️ מה תרצו לדעת על לאה?', 'lea');
+      addBubble(GREETINGS[Math.floor(Math.random() * GREETINGS.length)], 'lea');
       setInputLocked(false);
     }
 
@@ -248,15 +256,13 @@
       btn.disabled = locked;
     }
 
-    async function sendToAI(text, isSystem = false) {
+    async function sendToAI(text) {
       const typingBubble = addBubble('...', 'lea');
-      if (!isSystem) conversationHistory.push({ role: 'user', content: text });
-
       try {
         const messages = [
           { role: 'system', content: SYSTEM_PROMPT },
           ...conversationHistory,
-          ...(isSystem ? [{ role: 'user', content: text }] : [])
+          { role: 'user', content: text }
         ];
         const res = await fetch(API_URL, {
           method: 'POST',
@@ -266,15 +272,16 @@
         const data = await res.json();
         const answer = data.choices?.[0]?.message?.content || 'מצטער, לא הצלחתי להתחבר. נסה שוב.';
         typingBubble.innerHTML = `<div class="name">לאה ז״ל</div>${answer}`;
-        if (!isSystem) conversationHistory.push({ role: 'assistant', content: answer });
+        conversationHistory.push({ role: 'user', content: text });
+        conversationHistory.push({ role: 'assistant', content: answer });
       } catch (e) {
         typingBubble.innerHTML = `<div class="name">לאה ז״ל</div>שגיאת חיבור, נסה שוב 🕯️`;
+      } finally {
+        saveHistory();
+        setInputLocked(false);
+        document.getElementById('msg-input').focus();
+        chatWindow.scrollTop = chatWindow.scrollHeight;
       }
-
-      saveHistory();
-      setInputLocked(false);
-      document.getElementById('msg-input').focus();
-      chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
     async function sendMessage() {
@@ -293,7 +300,7 @@
     });
 
     if (!loadHistory()) {
-      addBubble('ברוכים הבאים 🕯️ מה תרצו לדעת על לאה?', 'lea');
+      addBubble(GREETINGS[Math.floor(Math.random() * GREETINGS.length)], 'lea');
     }
   </script>
 
