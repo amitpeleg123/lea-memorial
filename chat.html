@@ -192,17 +192,20 @@
 
     const chatWindow = document.getElementById('chat-window');
     const STORAGE_KEY = 'lea_chat_history';
+    let conversationHistory = [];
 
     function saveHistory() {
       const bubbles = [...chatWindow.querySelectorAll('.bubble')].map(b => ({
         who: b.classList.contains('lea') ? 'lea' : 'user',
         html: b.innerHTML
       }));
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(bubbles));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(bubbles));
+      localStorage.setItem(STORAGE_KEY + '_conv', JSON.stringify(conversationHistory));
     }
 
     function loadHistory() {
-      const saved = sessionStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const savedConv = localStorage.getItem(STORAGE_KEY + '_conv');
       if (!saved) return false;
       const bubbles = JSON.parse(saved);
       bubbles.forEach(b => {
@@ -211,14 +214,18 @@
         div.innerHTML = b.html;
         chatWindow.appendChild(div);
       });
+      if (savedConv) conversationHistory = JSON.parse(savedConv);
       chatWindow.scrollTop = chatWindow.scrollHeight;
       return true;
     }
 
     function clearChat() {
-      sessionStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEY + '_conv');
+      conversationHistory = [];
       chatWindow.innerHTML = '';
-      setTimeout(() => addBubble('שאל/י כל שאלה על לאה — על הילדות, המשפחה, הבישולים ועוד 🕯️', 'lea'), 200);
+      setInputLocked(true);
+      sendToAI('ברך את המשתמש בברכת פתיחה קצרה ושאל מה הוא רוצה לדעת על לאה.', true);
     }
 
     function addBubble(text, who) {
@@ -235,45 +242,50 @@
       return div;
     }
 
-    async function sendMessage() {
+    function setInputLocked(locked) {
       const input = document.getElementById('msg-input');
-      const text = input.value.trim();
-      if (!text) return;
-      input.value = '';
-      input.disabled = true;
-      document.getElementById('send-btn').disabled = true;
+      const btn = document.getElementById('send-btn');
+      input.disabled = locked;
+      btn.disabled = locked;
+    }
 
-      addBubble(text, 'user');
-
+    async function sendToAI(text, isSystem = false) {
       const typingBubble = addBubble('...', 'lea');
+      if (!isSystem) conversationHistory.push({ role: 'user', content: text });
 
       try {
+        const messages = [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...conversationHistory,
+          ...(isSystem ? [{ role: 'user', content: text }] : [])
+        ];
         const res = await fetch(API_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${API_KEY}`
-          },
-          body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
-            messages: [
-              { role: 'system', content: SYSTEM_PROMPT },
-              { role: 'user', content: text }
-            ]
-          })
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+          body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages })
         });
         const data = await res.json();
         const answer = data.choices?.[0]?.message?.content || 'מצטער, לא הצלחתי להתחבר. נסה שוב.';
         typingBubble.innerHTML = `<div class="name">לאה ז״ל</div>${answer}`;
+        if (!isSystem) conversationHistory.push({ role: 'assistant', content: answer });
       } catch (e) {
         typingBubble.innerHTML = `<div class="name">לאה ז״ל</div>שגיאת חיבור, נסה שוב 🕯️`;
       }
 
       saveHistory();
-      input.disabled = false;
-      input.focus();
-      document.getElementById('send-btn').disabled = false;
+      setInputLocked(false);
+      document.getElementById('msg-input').focus();
       chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('msg-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      setInputLocked(true);
+      addBubble(text, 'user');
+      await sendToAI(text);
     }
 
     document.getElementById('send-btn').addEventListener('click', sendMessage);
@@ -282,7 +294,8 @@
     });
 
     if (!loadHistory()) {
-      setTimeout(() => addBubble('שאל/י כל שאלה על לאה — על הילדות, המשפחה, הבישולים ועוד 🕯️', 'lea'), 400);
+      setInputLocked(true);
+      sendToAI('ברך את המשתמש בברכת פתיחה קצרה ושאל מה הוא רוצה לדעת על לאה.', true);
     }
   </script>
 
