@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>עורך תשבץ</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; direction: rtl; }
+h1 { margin-bottom: 10px; font-size: 1.4rem; }
+.instructions { background: #fff3cd; padding: 10px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; line-height: 1.6; }
+.layout { display: flex; gap: 24px; align-items: flex-start; }
+
+/* גריד */
+#grid-wrap { overflow: auto; }
+table { border-collapse: collapse; direction: ltr; }
+td { width: 44px; height: 44px; background: #222; border: 1px solid #555; position: relative; }
+td.drop-target { background: #333; }
+td.drop-target.over { background: #556; }
+
+.cell-content {
+  width: 100%; height: 100%;
+  background: #fdf0f0;
+  border: 2px solid #c8a0a8;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; font-weight: 700; color: #3d0c14;
+  position: relative; cursor: pointer;
+  user-select: none;
+}
+.cell-content:hover { background: #f5c8ce; }
+.cell-num {
+  position: absolute; top: 2px; right: 3px;
+  font-size: 0.5rem; color: #7b1e2e; font-weight: 700;
+}
+
+/* רשימת מילים */
+#words-panel { min-width: 200px; }
+#words-panel h3 { margin-bottom: 10px; font-size: 1rem; }
+.word-item {
+  background: #3d0c14; color: #e8b4bc;
+  border: 2px solid #7b1e2e; border-radius: 8px;
+  padding: 8px 14px; margin-bottom: 8px;
+  cursor: grab; display: flex; align-items: center; gap: 8px;
+  font-size: 0.95rem; font-weight: 700;
+}
+.word-item:active { cursor: grabbing; opacity: 0.7; }
+.word-item .dir-badge {
+  font-size: 0.7rem; background: #7b1e2e; border-radius: 4px;
+  padding: 2px 6px; color: #fdf0f0;
+}
+.word-item.placed { opacity: 0.4; }
+
+/* כפתורים */
+.buttons { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+button {
+  padding: 10px 20px; border-radius: 8px; border: none;
+  font-size: 0.95rem; font-weight: 700; cursor: pointer;
+}
+#btn-export { background: #3d0c14; color: #e8b4bc; }
+#btn-clear  { background: #888; color: white; }
+#btn-export:hover { background: #7b1e2e; }
+
+/* פלט */
+#output {
+  margin-top: 16px; background: #222; color: #0f0; font-family: monospace;
+  padding: 12px; border-radius: 8px; font-size: 0.8rem; white-space: pre;
+  display: none;
+}
+
+.coord-label { font-size: 0.65rem; color: #888; position: absolute; bottom: 1px; left: 2px; }
+</style>
+</head>
+<body>
+
+<h1>עורך תשבץ — גרור מילים לגריד</h1>
+<div class="instructions">
+  <strong>איך משתמשים:</strong><br>
+  1. גרור מילה מהרשימה לתא בגריד — המילה תושם שם<br>
+  2. לחץ על מילה בגריד כדי להסיר אותה<br>
+  3. כשהכל נכון — לחץ "ייצא קוד" וקבל את הקוד לדיאדיקציות
+</div>
+
+<div class="layout">
+  <div>
+    <div id="grid-wrap">
+      <table id="grid"></table>
+    </div>
+    <div class="buttons">
+      <button id="btn-export">ייצא קוד לאתר</button>
+      <button id="btn-clear">נקה הכל</button>
+    </div>
+    <pre id="output"></pre>
+  </div>
+
+  <div id="words-panel">
+    <h3>מילים לשיבוץ:</h3>
+    <div id="word-list"></div>
+  </div>
+</div>
+
+<script>
+const ROWS = 13, COLS = 14;
+
+const WORDS = [
+  { name:"מעיין", dir:"D" },
+  { name:"עלמה",  dir:"D" },
+  { name:"עמית",  dir:"A" },
+  { name:"עילית", dir:"D" },
+  { name:"ליהי",  dir:"A" },
+  { name:"עופר",  dir:"D" },
+  { name:"ענת",   dir:"A" },
+  { name:"ענב",   dir:"D" },
+  { name:"אפיק",  dir:"A" },
+  { name:"קטי",   dir:"D" },
+  { name:"ערן",   dir:"A" },
+  { name:"עדי",   dir:"D" },
+  { name:"עילי",  dir:"A" },
+  { name:"גד",    dir:"D" },
+];
+
+// מצב: { "r,c": [{name, dir, index}] }
+let placed = {};
+
+function buildGrid() {
+  const tbl = document.getElementById('grid');
+  tbl.innerHTML = '';
+  for (let r = 0; r < ROWS; r++) {
+    const tr = document.createElement('tr');
+    for (let c = 0; c < COLS; c++) {
+      const td = document.createElement('td');
+      td.className = 'drop-target';
+      td.dataset.r = r; td.dataset.c = c;
+
+      const coord = document.createElement('span');
+      coord.className = 'coord-label';
+      coord.textContent = `${r},${c}`;
+      td.appendChild(coord);
+
+      td.addEventListener('dragover', e => { e.preventDefault(); td.classList.add('over'); });
+      td.addEventListener('dragleave', () => td.classList.remove('over'));
+      td.addEventListener('drop', e => {
+        e.preventDefault();
+        td.classList.remove('over');
+        const wordName = e.dataTransfer.getData('word');
+        const wordDir  = e.dataTransfer.getData('dir');
+        placeWord(wordName, wordDir, parseInt(td.dataset.r), parseInt(td.dataset.c));
+      });
+      tr.appendChild(td);
+    }
+    tbl.appendChild(tr);
+  }
+  renderPlaced();
+}
+
+function placeWord(name, dir, row, col) {
+  // הסר מיקום קיים של המילה
+  for (const key in placed) {
+    placed[key] = placed[key].filter(p => p.name !== name);
+    if (placed[key].length === 0) delete placed[key];
+  }
+  // שים במיקום חדש
+  const key = `${row},${col}`;
+  if (!placed[key]) placed[key] = [];
+  placed[key].push({ name, dir });
+  renderPlaced();
+  updateWordList();
+}
+
+function removeWord(name) {
+  for (const key in placed) {
+    placed[key] = placed[key].filter(p => p.name !== name);
+    if (placed[key].length === 0) delete placed[key];
+  }
+  renderPlaced();
+  updateWordList();
+}
+
+function getPlacedWord(name) {
+  for (const key in placed) {
+    const found = placed[key].find(p => p.name === name);
+    if (found) {
+      const [r, c] = key.split(',').map(Number);
+      return { row: r, col: c, dir: found.dir };
+    }
+  }
+  return null;
+}
+
+function renderPlaced() {
+  // בנה גריד אותיות
+  const G = Array.from({length: ROWS}, () => Array(COLS).fill(null));
+  const nums = {};
+
+  for (const key in placed) {
+    placed[key].forEach(({ name, dir }) => {
+      const [row, col] = key.split(',').map(Number);
+      for (let i = 0; i < name.length; i++) {
+        const r = dir === 'D' ? row + i : row;
+        const c = dir === 'A' ? col + i : col;
+        // מאוזן: col קטן = ימין בתצוגה RTL, אות ראשונה בימין = אות אחרונה במערך
+        const letter = dir === 'A' ? name[name.length - 1 - i] : name[i];
+        if (r < ROWS && c < COLS) {
+          if (!G[r][c]) G[r][c] = { letters: [], startOf: [] };
+          if (!G[r][c].letters.includes(letter)) G[r][c].letters.push(letter);
+          if (i === 0) G[r][c].startOf.push({ name, dir });
+        }
+      }
+    });
+  }
+
+  // מספור
+  let num = 1;
+  const numbered = {};
+  WORDS.forEach(w => {
+    const p = getPlacedWord(w.name);
+    if (!p) return;
+    const key = `${p.row},${p.col}`;
+    if (!numbered[key]) { numbered[key] = num++; }
+  });
+
+  // ציור
+  const tbl = document.getElementById('grid');
+  for (let r = 0; r < ROWS; r++) {
+    const tr = tbl.rows[r];
+    for (let c = 0; c < COLS; c++) {
+      const td = tr.cells[c];
+      // שמור קואורד label
+      const coordSpan = td.querySelector('.coord-label');
+      td.innerHTML = '';
+      if (coordSpan) td.appendChild(coordSpan);
+
+      const cell = G[r][c];
+      if (cell) {
+        const div = document.createElement('div');
+        div.className = 'cell-content';
+
+        const letter = cell.letters.length === 1 ? cell.letters[0] : cell.letters.join('/');
+        div.textContent = letter;
+
+        if (cell.startOf.length > 0) {
+          const nkey = `${r},${c}`;
+          if (numbered[nkey]) {
+            const sp = document.createElement('span');
+            sp.className = 'cell-num';
+            sp.textContent = numbered[nkey];
+            div.appendChild(sp);
+          }
+          div.title = cell.startOf.map(s => s.name).join(', ');
+          div.addEventListener('click', () => {
+            if (cell.startOf.length === 1) {
+              removeWord(cell.startOf[0].name);
+            } else {
+              const choice = cell.startOf.map(s => s.name).join(' / ');
+              const pick = prompt(`איזו מילה להסיר?\n${cell.startOf.map((s,i)=>`${i+1}. ${s.name}`).join('\n')}`);
+              const idx = parseInt(pick) - 1;
+              if (!isNaN(idx) && cell.startOf[idx]) removeWord(cell.startOf[idx].name);
+            }
+          });
+        }
+
+        td.appendChild(div);
+      }
+    }
+  }
+}
+
+function updateWordList() {
+  const panel = document.getElementById('word-list');
+  panel.innerHTML = '';
+  WORDS.forEach(w => {
+    const placed_w = getPlacedWord(w.name);
+    const div = document.createElement('div');
+    div.className = 'word-item' + (placed_w ? ' placed' : '');
+    div.draggable = true;
+    div.innerHTML = `<span class="dir-badge">${w.dir === 'A' ? 'מאוזן' : 'מאונך'}</span> ${w.name}`;
+    if (placed_w) div.innerHTML += ` <small style="color:#c47d8a">(r${placed_w.row},c${placed_w.col})</small>`;
+    div.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('word', w.name);
+      e.dataTransfer.setData('dir', w.dir);
+    });
+    panel.appendChild(div);
+  });
+}
+
+document.getElementById('btn-export').addEventListener('click', () => {
+  // המרת col מ-LTR (עורך) ל-RTL (אתר):
+  // מאונך:  col_אתר = (COLS-1) - col_עורך
+  // מאוזן:  col_אתר = (COLS-1) - (col_עורך + אורך - 1)
+  const lines = ['const PEOPLE = ['];
+  WORDS.forEach(w => {
+    const p = getPlacedWord(w.name);
+    if (p) {
+      const colSite = w.dir === 'D'
+        ? (COLS - 1) - p.col
+        : (COLS - 1) - (p.col + w.name.length - 1);
+      lines.push(`  { name:"${w.name}", dir:"${w.dir}", row:${p.row}, col:${colSite}, ded:"ההקדשה של ${w.name} תתווסף כאן..." },`);
+    }
+  });
+  lines.push('];');
+  lines.push(`\nconst ROWS = ${ROWS}, COLS = ${COLS};`);
+  const out = document.getElementById('output');
+  out.textContent = lines.join('\n');
+  out.style.display = 'block';
+});
+
+document.getElementById('btn-clear').addEventListener('click', () => {
+  placed = {};
+  renderPlaced();
+  updateWordList();
+});
+
+buildGrid();
+updateWordList();
+</script>
+</body>
+</html>

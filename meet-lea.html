@@ -16,8 +16,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
+      padding: 60px 20px 80px;
     }
 
     .back {
@@ -26,11 +25,8 @@
       right: 24px;
       color: #c47d8a;
       text-decoration: none;
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.2s;
+      font-size: .95rem;
+      transition: color .2s;
     }
     .back:hover { color: #e8b4bc; }
 
@@ -46,20 +42,21 @@
       color: #c47d8a;
       font-size: 1rem;
       text-align: center;
-      margin-bottom: 56px;
+      margin-bottom: 48px;
       font-weight: 300;
     }
 
     .cards {
       display: flex;
-      gap: 28px;
+      gap: 20px;
       flex-wrap: wrap;
       justify-content: center;
+      max-width: 860px;
     }
 
     .card {
-      width: 200px;
-      height: 200px;
+      width: 160px;
+      height: 160px;
       border: 2px solid #7b1e2e;
       border-radius: 14px;
       background: linear-gradient(135deg, #3d0c14, #2a0810);
@@ -67,11 +64,11 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 10px;
       cursor: pointer;
       text-decoration: none;
       color: #f0e0d6;
-      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
       box-shadow: 0 4px 20px #00000055;
       position: relative;
     }
@@ -82,37 +79,42 @@
       border-color: #c47d8a;
     }
 
-    .card-num {
-      position: absolute;
-      top: 12px;
-      right: 14px;
-      font-size: 0.75rem;
-      color: #7b1e2e;
-      font-weight: 700;
+    .card.soon {
+      opacity: 0.45;
+      cursor: default;
+      pointer-events: none;
     }
 
-    .card-icon { font-size: 2.2rem; }
+    .card-icon { font-size: 2rem; }
 
     .card-text {
-      font-size: 1rem;
+      font-size: .95rem;
       text-align: center;
       color: #e8b4bc;
-      line-height: 1.5;
-      padding: 0 12px;
-      font-weight: 400;
+      font-weight: 700;
+      padding: 0 8px;
+    }
+
+    .soon-badge {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.7rem;
+      color: #7b1e2e;
+      font-weight: 700;
+      letter-spacing: 1px;
     }
 
     footer {
       position: fixed;
       bottom: 20px;
       color: #5a1e28;
-      font-size: 0.8rem;
+      font-size: .8rem;
     }
   </style>
 </head>
 <body>
 
-  <a class="back" href="index.html">→ חזרה</a>
+  <a class="back" href="index.html">← חזרה</a>
 
   <h1>הכר את לאה</h1>
   <p class="subtitle">בחר איך תרצה להכיר אותה</p>
@@ -120,22 +122,51 @@
   <div class="cards">
 
     <a class="card" href="chat.html">
-      <span class="card-num">1</span>
       <span class="card-icon">💬</span>
-      <span class="card-text">דרך צ׳אט<br><small style="color:#c47d8a;font-size:0.8rem">שאל שאלות</small></span>
+      <span class="card-text">שאל שאלות</span>
     </a>
 
-    <a class="card" href="crossword.html">
-      <span class="card-num">2</span>
-      <span class="card-icon">🔤</span>
-      <span class="card-text">דרך תשבץ<br><small style="color:#c47d8a;font-size:0.8rem">פתור וגלה סיפורים</small></span>
-    </a>
-
-    <a class="card" href="story.html">
-      <span class="card-num">3</span>
+    <div class="card soon">
       <span class="card-icon">📖</span>
-      <span class="card-text">סיפור החיים<br><small style="color:#c47d8a;font-size:0.8rem">קרא את הסיפור שלה</small></span>
-    </a>
+      <span class="card-text">סיפור החיים</span>
+      <span class="soon-badge">בקרוב</span>
+    </div>
+
+    <div class="card soon">
+      <span class="card-icon">🕰️</span>
+      <span class="card-text">ציר זמן</span>
+      <span class="soon-badge">בקרוב</span>
+    </div>
+
+    <div class="card soon">
+      <span class="card-icon">🖼️</span>
+      <span class="card-text">גלריה</span>
+      <span class="soon-badge">בקרוב</span>
+    </div>
+
+    <div class="card soon">
+      <span class="card-icon">💬</span>
+      <span class="card-text">ציטוטים</span>
+      <span class="soon-badge">בקרוב</span>
+    </div>
+
+    <div class="card soon">
+      <span class="card-icon">❤️</span>
+      <span class="card-text">מה אהבה</span>
+      <span class="soon-badge">בקרוב</span>
+    </div>
+
+    <div class="card soon">
+      <span class="card-icon">🗺️</span>
+      <span class="card-text">מפה</span>
+      <span class="soon-badge">בקרוב</span>
+    </div>
+
+    <div class="card soon">
+      <span class="card-icon">📚</span>
+      <span class="card-text">ספר זיכרונות</span>
+      <span class="soon-badge">בקרוב</span>
+    </div>
 
   </div>
 

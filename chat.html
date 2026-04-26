@@ -25,7 +25,8 @@
       right: 24px;
       color: #c47d8a;
       text-decoration: none;
-      font-size: .95rem;
+      font-size: 1.1rem;
+      font-weight: 700;
       transition: color .2s;
     }
     .back:hover { color: #e8b4bc; }
@@ -134,6 +135,20 @@
       transition: opacity .2s;
     }
     #send-btn:hover { opacity: .85; }
+
+    #clear-btn {
+      background: none;
+      border: 1px solid #7b1e2e;
+      border-radius: 8px;
+      color: #c47d8a;
+      font-size: .85rem;
+      cursor: pointer;
+      font-family: 'Heebo', sans-serif;
+      padding: 6px 18px;
+      margin-bottom: 8px;
+      transition: color .2s, border-color .2s;
+    }
+    #clear-btn:hover { color: #e8b4bc; border-color: #c47d8a; }
   </style>
 </head>
 <body>
@@ -142,6 +157,7 @@
 
   <h1>💬 שאל שאלות וקבל תשובות</h1>
   <p class="subtitle">שאל/י כל דבר על לאה</p>
+  <button id="clear-btn" onclick="clearChat()">🗑 נקה שיחה</button>
 
   <div id="chat-window"></div>
 
@@ -151,8 +167,8 @@
   </div>
 
   <script>
-    const API_KEY = 'AIzaSyCTcbJH95s6DMSc9WGRaVIpeRfup2njJzE';
-    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`;
+    const API_KEY = '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';
+    const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
     const SYSTEM_PROMPT = `אתה עוזר לענות על שאלות על לאה פלג ז"ל, סבתא אהובה שנפטרה.
 ענה בעברית בלבד, בצורה חמה, קצרה ומכבדת.
@@ -165,12 +181,41 @@
 - המאכלים שהיא אהבה להכין: קובה מטוגן ולזניה של סבתא.
 - יש לה 3 בנים:
   1. עדי — הבן הגדול, נשוי לקטי. יש להם 3 ילדים: גד (הנכד הבכור של לאה, גר ברומא), ליהי (הבינונית, מאורסת ליאן — חתונה במאי), וענב (הקטן).
-  2. ערן — הבן האמצעי, נשוי לענת. יש להם 2 ילדים: מעיין (הגדולה) ואפיק (הקטן — מצחיק, מלך, מבין בקלאוד קוד ועוזר לבניית אתר הזיכרון הזה).
+  2. ערן — הבן האמצעי, נשוי לענת. יש להם 2 ילדים: מעיין (הגדולה) ואפיק (הקטן — בן דודו של עמית, מצחיק, מלך, מבין בקלאוד קוד ועוזר לבניית אתר הזיכרון הזה).
   3. עופר — הבן הקטן, נשוי לעילית. יש להם 3 ילדים: עילי (הגדול, כרגע בדרום אמריקה עד יוני 2025), עלמה (הבינונית), ועמית (נכד הזקונים של לאה — הוא בנה את אתר הזיכרון הזה).
 
 חשוב במיוחד: אם שואלים על מעיין — תגיד שעמית עומר שהיא מלכה! (היא גם סידרה לו את החדר והוא מסודר עכשיו)`;
 
     const chatWindow = document.getElementById('chat-window');
+    const STORAGE_KEY = 'lea_chat_history';
+
+    function saveHistory() {
+      const bubbles = [...chatWindow.querySelectorAll('.bubble')].map(b => ({
+        who: b.classList.contains('lea') ? 'lea' : 'user',
+        html: b.innerHTML
+      }));
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(bubbles));
+    }
+
+    function loadHistory() {
+      const saved = sessionStorage.getItem(STORAGE_KEY);
+      if (!saved) return false;
+      const bubbles = JSON.parse(saved);
+      bubbles.forEach(b => {
+        const div = document.createElement('div');
+        div.className = `bubble ${b.who}`;
+        div.innerHTML = b.html;
+        chatWindow.appendChild(div);
+      });
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+      return true;
+    }
+
+    function clearChat() {
+      sessionStorage.removeItem(STORAGE_KEY);
+      chatWindow.innerHTML = '';
+      setTimeout(() => addBubble('שאל/י כל שאלה על לאה — על הילדות, המשפחה, הבישולים ועוד 🕯️', 'lea'), 200);
+    }
 
     function addBubble(text, who) {
       const div = document.createElement('div');
@@ -182,6 +227,7 @@
       }
       chatWindow.appendChild(div);
       chatWindow.scrollTop = chatWindow.scrollHeight;
+      saveHistory();
       return div;
     }
 
@@ -199,20 +245,26 @@
       try {
         const res = await fetch(API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+          },
           body: JSON.stringify({
-            contents: [{
-              parts: [{ text: SYSTEM_PROMPT + '\n\nשאלה: ' + text }]
-            }]
+            model: 'llama-3.3-70b-versatile',
+            messages: [
+              { role: 'system', content: SYSTEM_PROMPT },
+              { role: 'user', content: text }
+            ]
           })
         });
         const data = await res.json();
-        const answer = data.candidates?.[0]?.content?.parts?.[0]?.text || 'מצטער, לא הצלחתי להתחבר. נסה שוב.';
+        const answer = data.choices?.[0]?.message?.content || 'מצטער, לא הצלחתי להתחבר. נסה שוב.';
         typingBubble.innerHTML = `<div class="name">לאה ז״ל</div>${answer}`;
       } catch (e) {
         typingBubble.innerHTML = `<div class="name">לאה ז״ל</div>שגיאת חיבור, נסה שוב 🕯️`;
       }
 
+      saveHistory();
       document.getElementById('send-btn').disabled = false;
       chatWindow.scrollTop = chatWindow.scrollHeight;
     }
@@ -222,7 +274,9 @@
       if (e.key === 'Enter') sendMessage();
     });
 
-    setTimeout(() => addBubble('שאל/י כל שאלה על לאה — על הילדות, המשפחה, הבישולים ועוד 🕯️', 'lea'), 400);
+    if (!loadHistory()) {
+      setTimeout(() => addBubble('שאל/י כל שאלה על לאה — על הילדות, המשפחה, הבישולים ועוד 🕯️', 'lea'), 400);
+    }
   </script>
 
 </body>
