@@ -121,6 +121,7 @@
     }
     #msg-input:focus { border-color: #c47d8a; }
     #msg-input::placeholder { color: #5a1e28; }
+    #msg-input:disabled { opacity: 0.4; cursor: not-allowed; }
 
     #send-btn {
       background: linear-gradient(135deg, #7b1e2e, #3d0c14);
@@ -135,6 +136,7 @@
       transition: opacity .2s;
     }
     #send-btn:hover { opacity: .85; }
+    #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     #clear-btn {
       background: none;
@@ -238,6 +240,7 @@
       const text = input.value.trim();
       if (!text) return;
       input.value = '';
+      input.disabled = true;
       document.getElementById('send-btn').disabled = true;
 
       addBubble(text, 'user');
@@ -267,6 +270,8 @@
       }
 
       saveHistory();
+      input.disabled = false;
+      input.focus();
       document.getElementById('send-btn').disabled = false;
       chatWindow.scrollTop = chatWindow.scrollHeight;
     }
