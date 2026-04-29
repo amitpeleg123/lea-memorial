@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>מה לאה בישלה</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #1a0a0a;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+    }
+
+    .back {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      color: #c47d8a;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      transition: color .2s;
+    }
+    .back:hover { color: #e8b4bc; }
+
+    h1 {
+      font-size: 2.2rem;
+      color: #e8b4bc;
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #c47d8a;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 48px;
+      font-weight: 300;
+    }
+
+    .cards {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+    }
+
+    .card {
+      width: 180px;
+      height: 180px;
+      border: 2px solid #7b1e2e;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #3d0c14, #2a0810);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      box-shadow: 0 4px 20px #00000055;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 36px #7b1e2e55;
+      border-color: #c47d8a;
+    }
+
+    .card-icon { font-size: 2.4rem; }
+
+    .card-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #e8b4bc;
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    .card-sub {
+      font-size: 0.78rem;
+      color: #c47d8a;
+      font-weight: 300;
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    /* מודל */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000b;
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal.open { display: flex; }
+
+    .modal-box {
+      background: linear-gradient(135deg, #3d0c14, #2a0810);
+      border: 2px solid #7b1e2e;
+      border-radius: 14px;
+      padding: 40px;
+      max-width: 460px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0 8px 40px #00000099;
+      text-align: center;
+    }
+
+    .modal-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+    .modal-name {
+      font-size: 1.8rem;
+      color: #e8b4bc;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .modal-origin {
+      font-size: 0.85rem;
+      color: #c47d8a;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .modal-recipe {
+      color: #f0e0d6;
+      line-height: 1.9;
+      font-size: 0.95rem;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: none;
+      border: none;
+      color: #c47d8a;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .close-btn:hover { color: #e8b4bc; }
+
+    footer {
+      position: fixed;
+      bottom: 20px;
+      color: #5a1e28;
+      font-size: .8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <a class="back" href="meet-lea.html">← חזרה</a>
+
+  <h1>🍲 מה לאה בישלה</h1>
+  <p class="subtitle">המאכלים שהיא הכינה מהלב</p>
+
+  <div class="cards" id="cards"></div>
+
+  <footer>לזכר נשמתה הטהורה ✦</footer>
+
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal()">✕</button>
+      <div class="modal-icon" id="micon"></div>
+      <div class="modal-name" id="mname"></div>
+      <div class="modal-origin" id="morigin"></div>
+      <div class="modal-recipe" id="mrecipe"></div>
+    </div>
+  </div>
+
+  <script>
+    const FOODS = [
+      {
+        icon: '🥙',
+        name: 'קובה מטוגן',
+        origin: 'מטבח סורי',
+        recipe: 'המתכון יתווסף בקרוב... 🕯️'
+      },
+      {
+        icon: '🍝',
+        name: 'לזניה של סבתא',
+        origin: 'מסורת המשפחה',
+        recipe: 'המתכון יתווסף בקרוב... 🕯️'
+      },
+      {
+        icon: '🍚',
+        name: 'רוז בין חאלב',
+        origin: 'אורז בחלב — מטבח סורי',
+        recipe: 'המתכון יתווסף בקרוב... 🕯️'
+      },
+      {
+        icon: '🍳',
+        name: 'שקשוקה מפורקת',
+        origin: 'הגרסה המיוחדת של לאה',
+        recipe: 'המתכון יתווסף בקרוב... 🕯️'
+      },
+    ];
+
+    const container = document.getElementById('cards');
+    FOODS.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <span class="card-icon">${f.icon}</span>
+        <span class="card-name">${f.name}</span>
+        <span class="card-sub">${f.origin}</span>
+      `;
+      card.addEventListener('click', () => openModal(f));
+      container.appendChild(card);
+    });
+
+    function openModal(f) {
+      document.getElementById('micon').textContent = f.icon;
+      document.getElementById('mname').textContent = f.name;
+      document.getElementById('morigin').textContent = f.origin;
+      document.getElementById('mrecipe').textContent = f.recipe;
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+    }
+
+    document.getElementById('modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('modal')) closeModal();
+    });
+  </script>
+
+</body>
+</html>
