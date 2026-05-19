@@ -165,6 +165,9 @@
 
   <div class="grid" id="grid"></div>
 
+  <h2 style="color:#e8b4bc;margin-top:60px;margin-bottom:16px;font-size:1.6rem;">🎬 סרטונים</h2>
+  <div class="grid" id="grid-videos"></div>
+
   <footer>לזכר נשמתה הטהורה ✦</footer>
 
   <div class="lightbox" id="lightbox">
@@ -284,18 +287,29 @@
     let currentIndex = 0;
     const grid = document.getElementById('grid');
 
+    const photoGrid = document.getElementById('grid');
+    const videoGrid = document.getElementById('grid-videos');
+
     PHOTOS.forEach((p, i) => {
       const item = document.createElement('div');
       item.className = `grid-item${p.type === 'video' ? ' video' : ''}`;
       item.onclick = () => openLightbox(i);
 
-      const img = document.createElement('img');
-      img.src = p.url;
-      img.alt = '';
-      img.onerror = () => { item.style.display = 'none'; };
-
-      item.appendChild(img);
-      grid.appendChild(item);
+      if (p.type === 'video') {
+        const vid = document.createElement('video');
+        vid.src = p.url;
+        vid.preload = 'metadata';
+        vid.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+        item.appendChild(vid);
+        videoGrid.appendChild(item);
+      } else {
+        const img = document.createElement('img');
+        img.src = p.url;
+        img.alt = '';
+        img.onerror = () => { item.style.display = 'none'; };
+        item.appendChild(img);
+        photoGrid.appendChild(item);
+      }
     });
 
     function openLightbox(index) {
