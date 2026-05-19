@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>גלריה — לאה פלג ז"ל</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #1a0a0a;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+    }
+
+    .back {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      color: #c47d8a;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      transition: color .2s;
+      z-index: 10;
+    }
+    .back:hover { color: #e8b4bc; }
+
+    h1 {
+      font-size: 2.2rem;
+      color: #e8b4bc;
+      text-align: center;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #c47d8a;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 960px;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .grid-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      border: 1.5px solid #3d0c14;
+      aspect-ratio: 1;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+    }
+
+    .grid-item:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 30px #7b1e2e55;
+      border-color: #c47d8a;
+    }
+
+    .grid-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .grid-item.video::after {
+      content: '▶';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: white;
+      background: #0008;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    /* lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000d;
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .lightbox.open { display: flex; }
+
+    .lightbox img, .lightbox video {
+      max-width: 90vw;
+      max-height: 85vh;
+      border-radius: 10px;
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      z-index: 101;
+    }
+
+    .lightbox-prev, .lightbox-next {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #0008;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 8px;
+      z-index: 101;
+    }
+    .lightbox-prev { right: 20px; }
+    .lightbox-next { left: 20px; }
+
+    footer {
+      margin-top: 60px;
+      color: #5a1e28;
+      font-size: .8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <a class="back" href="meet-lea.html">← חזרה</a>
+
+  <h1>📷 גלריה</h1>
+  <p class="subtitle">רגעים מחייה של לאה פלג ז"ל</p>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>לזכר נשמתה הטהורה ✦</footer>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <button class="lightbox-prev" onclick="changePhoto(-1)">›</button>
+    <div id="lightbox-content"></div>
+    <button class="lightbox-next" onclick="changePhoto(1)">‹</button>
+  </div>
+
+  <script>
+    const ALBUM_URL = 'https://photos.app.goo.gl/gzNbVVzSggk1FS8A9';
+
+    const PHOTOS = [
+      { type: 'photo', url: 'gallery-images/0841e217-ed49-43ff-be19-c6affa213009.jpg' },
+      { type: 'photo', url: 'gallery-images/0b2a53f0-cc9f-4cc4-94d4-e97883a112eb.jpg' },
+      { type: 'photo', url: 'gallery-images/0d9d0659-9b6f-481b-98e8-8fad0623f6b8.jpg' },
+      { type: 'photo', url: 'gallery-images/16967ce1-f7df-4894-8a28-a7d1f4e9e3c4.jpg' },
+      { type: 'photo', url: 'gallery-images/16d8458a-c8fa-4016-aa68-5344b2f4cbdf.jpg' },
+      { type: 'photo', url: 'gallery-images/1749cdae-a966-491a-9059-725cdcbfed7d.jpg' },
+      { type: 'photo', url: 'gallery-images/1bf6b6e5-a8ff-400b-aee5-f86871e571d6.jpg' },
+      { type: 'photo', url: 'gallery-images/239b4c72-e8b3-4125-ac0d-7c078d01931f.jpg' },
+      { type: 'photo', url: 'gallery-images/23e11c4e-ef54-4d33-a65d-73b0595b1b47.jpg' },
+      { type: 'photo', url: 'gallery-images/296c84da-4f77-4bf3-927c-f054378c93f2.jpg' },
+      { type: 'photo', url: 'gallery-images/2ace8752-f48f-4a3d-a87f-4d60488e1c62.jpg' },
+      { type: 'photo', url: 'gallery-images/30db1b90-fafc-435e-9cf8-0dd5ed1742c8.jpg' },
+      { type: 'photo', url: 'gallery-images/382b7580-331e-432d-bba8-ad4f0a3e8a8c.jpg' },
+      { type: 'photo', url: 'gallery-images/38808f5a-0dee-4f20-83c3-afcdd1a9dc26.jpg' },
+      { type: 'photo', url: 'gallery-images/3a196f82-a72e-4c17-9a7e-6fcd8e262a31.jpg' },
+      { type: 'photo', url: 'gallery-images/413c2012-5f24-4936-b2ed-6bffdb9e9490.jpg' },
+      { type: 'photo', url: 'gallery-images/4adbd728-a63c-4abd-899b-ce23db04c8d2.jpg' },
+      { type: 'photo', url: 'gallery-images/4eab45aa-3390-4431-99f9-22f1c82966db.jpg' },
+      { type: 'photo', url: 'gallery-images/4f19198a-ae2b-4e64-a823-8dcd0d5ccabc.jpg' },
+      { type: 'photo', url: 'gallery-images/52ebda67-c8a8-45ce-8961-9a5fefde048d.jpg' },
+      { type: 'photo', url: 'gallery-images/62ca7dba-efc1-4eb1-93f9-e0939df06623.jpg' },
+      { type: 'photo', url: 'gallery-images/654d1db9-5e61-405c-a304-ce5c7f459f05.jpg' },
+      { type: 'photo', url: 'gallery-images/6912256c-b9ba-432c-98d6-e5d6fe4ed196.jpg' },
+      { type: 'photo', url: 'gallery-images/69b08ffb-6019-4087-b9f4-f6750e6586ad.jpg' },
+      { type: 'photo', url: 'gallery-images/6e361bed-912f-44c6-8f8c-0b651599f28f.jpg' },
+      { type: 'photo', url: 'gallery-images/6e4ee950-7596-47ac-b59a-ce3f2f6ce1ce.jpg' },
+      { type: 'photo', url: 'gallery-images/704b8328-ba68-4e2f-a735-eab484b2f84b.jpg' },
+      { type: 'photo', url: 'gallery-images/70dfb4b7-1520-487d-9725-6bc90a77f5f8.jpg' },
+      { type: 'photo', url: 'gallery-images/77e775a1-275f-4b6c-ace4-dda8fbf3d3ba.jpg' },
+      { type: 'photo', url: 'gallery-images/7bbff602-71fd-4fb3-ba77-896af4b0b31f.jpg' },
+      { type: 'photo', url: 'gallery-images/7e753467-9b2c-48a0-bf15-bbd2065ca22a.jpg' },
+      { type: 'photo', url: 'gallery-images/8daacafc-b7e4-48e2-acea-27ba6fa04fd8.jpg' },
+      { type: 'photo', url: 'gallery-images/94c8e248-e406-4a46-aab9-a814a48518ed.jpg' },
+      { type: 'photo', url: 'gallery-images/976edb11-ec48-4a53-9199-122c1f4c5191.jpg' },
+      { type: 'photo', url: 'gallery-images/IMG_0798.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0799.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0800.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0801.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0802.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0803.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0804.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0805.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0806.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0807.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0808.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0809.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0810.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0811.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0812.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0813.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0814.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0815.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0816.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0817.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0818.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0819.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0820.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0821.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0822.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0823.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0824.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0825.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0826.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0827.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0828.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0829.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0831.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0832.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0833.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0834.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0835.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0836.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0837.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0838.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0839.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0840.JPG' },
+      { type: 'photo', url: 'gallery-images/IMG_0841.JPG' },
+      { type: 'photo', url: 'gallery-images/a61dd270-1381-498a-aebf-d2a2e9ceb376.jpg' },
+      { type: 'photo', url: 'gallery-images/b1e20a6a-e513-4af1-983b-2c4749ebaf36.jpg' },
+      { type: 'photo', url: 'gallery-images/b3b4b76c-8f64-4c42-9a4b-1cae0e0cbccb.jpg' },
+      { type: 'photo', url: 'gallery-images/b8c67755-e7cb-493a-a4ed-6f87393ba90e.jpg' },
+      { type: 'photo', url: 'gallery-images/bc4acf86-f6a6-444e-a7d5-06e6840e4c41.jpg' },
+      { type: 'photo', url: 'gallery-images/bc581b3e-ce2c-4f76-8c8f-26f2f2658b63.jpg' },
+      { type: 'photo', url: 'gallery-images/c6751872-baf8-413d-b743-7c311f0005a9.jpg' },
+      { type: 'photo', url: 'gallery-images/ce5ac893-6c15-42f7-afc1-2348cd245b6d.jpg' },
+      { type: 'photo', url: 'gallery-images/cea8a21e-da58-4175-9497-799c864abc0b.jpg' },
+      { type: 'photo', url: 'gallery-images/d1a284ef-1ae9-4cbd-8e4d-a58155bb18d6.jpg' },
+      { type: 'photo', url: 'gallery-images/d660092b-3709-44f0-a511-ec93da023cd5.jpg' },
+      { type: 'photo', url: 'gallery-images/d9b5e7ff-809e-4e16-b7a7-66e27432ec61.jpg' },
+      { type: 'photo', url: 'gallery-images/df0aadaa-5884-418a-a15a-621c9b6fcfde.jpg' },
+      { type: 'photo', url: 'gallery-images/df76bfb3-14c8-441f-8fe6-4fa32334986d.jpg' },
+      { type: 'photo', url: 'gallery-images/e4648a53-7eba-4d6d-b38d-f8f44966d2a6.jpg' },
+      { type: 'photo', url: 'gallery-images/e5f89a2b-1eb9-4b1f-9d8c-e37c14b320ac.jpg' },
+      { type: 'photo', url: 'gallery-images/f73d753b-11d0-4706-bfc0-3318329ffc3c.jpg' },
+      { type: 'photo', url: 'gallery-images/fb760689-baeb-4f54-91db-10ff3b08e222.jpg' },
+      { type: 'photo', url: 'gallery-images/fba59c94-148c-4131-9f9c-9546ead7449d.jpg' },
+      { type: 'video', url: 'gallery-images/176993c7-fa4d-4e21-96b2-0e03cba966b9.mp4' },
+      { type: 'video', url: 'gallery-images/2e12813a-b827-4712-912f-fbf062b0f131.mp4' },
+      { type: 'video', url: 'gallery-images/61bc47f1-7f04-4acb-a028-f41014f4a641.mp4' },
+      { type: 'video', url: 'gallery-images/VIDEO-2026-03-04-12-20-44.mp4' },
+      { type: 'video', url: 'gallery-images/fecbeb02-04d7-4bc6-b966-02b2b2a7d386.mp4' },
+    ];
+
+    let currentIndex = 0;
+    const grid = document.getElementById('grid');
+
+    PHOTOS.forEach((p, i) => {
+      const item = document.createElement('div');
+      item.className = `grid-item${p.type === 'video' ? ' video' : ''}`;
+      item.onclick = () => openLightbox(i);
+
+      const img = document.createElement('img');
+      img.src = p.url;
+      img.alt = '';
+      img.onerror = () => { item.style.display = 'none'; };
+
+      item.appendChild(img);
+      grid.appendChild(item);
+    });
+
+    function openLightbox(index) {
+      currentIndex = index;
+      const p = PHOTOS[index];
+      const content = document.getElementById('lightbox-content');
+      if (p.type === 'video') {
+        content.innerHTML = `<video controls autoplay src="${p.url}" style="max-width:90vw;max-height:85vh;border-radius:10px;"></video>`;
+      } else {
+        content.innerHTML = `<img src="${p.url}" alt="" />`;
+      }
+      document.getElementById('lightbox').classList.add('open');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.getElementById('lightbox-content').innerHTML = '';
+    }
+
+    function changePhoto(dir) {
+      currentIndex = (currentIndex + dir + PHOTOS.length) % PHOTOS.length;
+      openLightbox(currentIndex);
+    }
+
+    document.getElementById('lightbox').addEventListener('click', e => {
+      if (e.target === document.getElementById('lightbox')) closeLightbox();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') changePhoto(1);
+      if (e.key === 'ArrowLeft') changePhoto(-1);
+    });
+  </script>
+
+</body>
+</html>
