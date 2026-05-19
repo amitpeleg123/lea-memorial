@@ -44,9 +44,36 @@
       color: #c47d8a;
       font-size: 1rem;
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 24px;
       font-weight: 300;
     }
+
+    .tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: 2px solid #7b1e2e;
+      border-radius: 10px;
+      padding: 10px 28px;
+      color: #c47d8a;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, #7b1e2e, #3d0c14);
+      color: #e8b4bc;
+      border-color: #c47d8a;
+    }
+
+    .tab-btn:hover { border-color: #c47d8a; color: #e8b4bc; }
 
     .grid {
       display: grid;
@@ -163,10 +190,13 @@
   <h1>📷 גלריה</h1>
   <p class="subtitle">רגעים מחייה של לאה פלג ז"ל</p>
 
-  <div class="grid" id="grid"></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('photos')">📷 תמונות</button>
+    <button class="tab-btn" onclick="showTab('videos')">🎬 סרטונים</button>
+  </div>
 
-  <h2 style="color:#e8b4bc;margin-top:60px;margin-bottom:16px;font-size:1.6rem;">🎬 סרטונים</h2>
-  <div class="grid" id="grid-videos"></div>
+  <div id="tab-photos"><div class="grid" id="grid"></div></div>
+  <div id="tab-videos" style="display:none"><div class="grid" id="grid-videos"></div></div>
 
   <footer>לזכר נשמתה הטהורה ✦</footer>
 
@@ -283,6 +313,14 @@
       { type: 'video', url: 'gallery-images/VIDEO-2026-03-04-12-20-44.mp4' },
       { type: 'video', url: 'gallery-images/fecbeb02-04d7-4bc6-b966-02b2b2a7d386.mp4' },
     ];
+
+    function showTab(tab) {
+      document.getElementById('tab-photos').style.display = tab === 'photos' ? 'block' : 'none';
+      document.getElementById('tab-videos').style.display = tab === 'videos' ? 'block' : 'none';
+      document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', (i === 0 && tab === 'photos') || (i === 1 && tab === 'videos'));
+      });
+    }
 
     let currentIndex = 0;
     const grid = document.getElementById('grid');
