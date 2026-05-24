@@ -471,12 +471,11 @@
         timestamp: serverTimestamp()
       });
 
-      // שליחת אימייל
-      window.emailjs.send('service_af2onws', 'q3z92df', {
-        from_name: author,
-        message: text,
-        name: author,
-        email: 'amitpeleg309@gmail.com'
+      // שליחת התראה
+      fetch(`https://ntfy.sh/lea-memorial-amit-309`, {
+        method: 'POST',
+        body: `זיכרון חדש מ-${author}:\n${text.slice(0, 200)}`,
+        headers: { 'Title': 'ספר זיכרונות — זיכרון חדש!', 'Priority': 'high', 'Tags': 'book' }
       }).catch(() => {});
 
       document.getElementById('memoryText').value = '';
