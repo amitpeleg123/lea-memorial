@@ -375,7 +375,7 @@
 <!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
-  emailjs.init('_UZS3V-HK7gi-Ag9Z');
+  window.emailjs.init('_UZS3V-HK7gi-Ag9Z');
 </script>
 
 <!-- Firebase SDK -->
@@ -472,7 +472,7 @@
       });
 
       // שליחת אימייל
-      emailjs.send('service_af2onws', 'q3z92df', {
+      window.emailjs.send('service_af2onws', 'q3z92df', {
         from_name: author,
         message: text,
         name: author,
