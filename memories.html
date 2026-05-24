@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ספר זיכרונות — לאה פלג ז״ל</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #1a0a0a;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+    }
+
+    .back {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      color: #c47d8a;
+      text-decoration: none;
+      font-size: .95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+      z-index: 100;
+    }
+    .back:hover { color: #e8b4bc; }
+
+    h1 {
+      font-size: 2.4rem;
+      color: #e8b4bc;
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #c47d8a;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 48px;
+      font-weight: 300;
+    }
+
+    /* טופס כתיבה */
+    .write-box {
+      background: #2a1010;
+      border: 1px solid #5a2030;
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 640px;
+      margin-bottom: 48px;
+    }
+
+    .write-box h2 {
+      color: #e8b4bc;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .name-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .name-input {
+      flex: 1;
+      min-width: 160px;
+      background: #1a0a0a;
+      border: 1px solid #5a2030;
+      border-radius: 10px;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .name-input:focus { border-color: #c47d8a; }
+    .name-input::placeholder { color: #7a4a55; }
+    .name-input:disabled { opacity: 0.4; }
+
+    .anon-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #c47d8a;
+      font-size: .9rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .anon-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #c47d8a;
+      cursor: pointer;
+    }
+
+    textarea {
+      width: 100%;
+      background: #1a0a0a;
+      border: 1px solid #5a2030;
+      border-radius: 10px;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      padding: 14px;
+      resize: vertical;
+      min-height: 120px;
+      outline: none;
+      transition: border-color .2s;
+      margin-bottom: 16px;
+    }
+    textarea:focus { border-color: #c47d8a; }
+    textarea::placeholder { color: #7a4a55; }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .2s;
+    }
+    .submit-btn:hover { opacity: 0.85; }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .success-msg {
+      color: #a8d8a8;
+      font-size: .95rem;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* רשימת זיכרונות */
+    .memories-list {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .memory-card {
+      background: #2a1010;
+      border: 1px solid #5a2030;
+      border-radius: 16px;
+      padding: 22px 24px;
+      position: relative;
+    }
+
+    .memory-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .memory-author {
+      font-weight: 700;
+      color: #e8b4bc;
+      font-size: 1rem;
+    }
+
+    .memory-date {
+      color: #7a4a55;
+      font-size: .8rem;
+    }
+
+    .memory-text {
+      color: #f0e0d6;
+      font-size: 1rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      margin-bottom: 16px;
+    }
+
+    /* אזור לייק + תגובות */
+    .memory-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-top: 1px solid #3a1a1a;
+      padding-top: 12px;
+    }
+
+    .like-btn {
+      background: none;
+      border: 1px solid #5a2030;
+      border-radius: 20px;
+      color: #c47d8a;
+      font-family: 'Heebo', sans-serif;
+      font-size: .9rem;
+      padding: 6px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .2s, color .2s;
+    }
+    .like-btn:hover, .like-btn.liked {
+      background: #5a2030;
+      color: #f0e0d6;
+    }
+
+    .reply-btn {
+      background: none;
+      border: none;
+      color: #7a4a55;
+      font-family: 'Heebo', sans-serif;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: color .2s;
+    }
+    .reply-btn:hover { color: #c47d8a; }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #5a2030;
+      font-family: 'Heebo', sans-serif;
+      font-size: .8rem;
+      cursor: pointer;
+      margin-right: auto;
+      transition: color .2s;
+      display: none;
+    }
+    .delete-btn:hover { color: #e8b4bc; }
+    .admin-mode .delete-btn { display: block; }
+
+    /* תגובות */
+    .replies-list {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .reply-card {
+      background: #1a0a0a;
+      border-right: 3px solid #5a2030;
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .reply-author {
+      font-weight: 700;
+      color: #c47d8a;
+      font-size: .85rem;
+      margin-bottom: 4px;
+    }
+
+    .reply-text {
+      color: #d0c0b6;
+      font-size: .9rem;
+      line-height: 1.6;
+    }
+
+    .reply-form {
+      display: none;
+      margin-top: 12px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .reply-form.open { display: flex; }
+
+    .reply-form input, .reply-form textarea {
+      background: #1a0a0a;
+      border: 1px solid #5a2030;
+      border-radius: 8px;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      font-size: .9rem;
+      padding: 8px 12px;
+      outline: none;
+    }
+    .reply-form textarea { min-height: 70px; resize: vertical; margin-bottom: 0; }
+    .reply-form input::placeholder, .reply-form textarea::placeholder { color: #7a4a55; }
+
+    .reply-submit {
+      background: #5a2030;
+      color: #f0e0d6;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-family: 'Heebo', sans-serif;
+      font-size: .9rem;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background .2s;
+    }
+    .reply-submit:hover { background: #7b1e2e; }
+
+    /* מצב ריק */
+    .empty-state {
+      text-align: center;
+      color: #7a4a55;
+      font-size: 1rem;
+      padding: 40px 0;
+    }
+
+    /* מצב טעינה */
+    .loading {
+      text-align: center;
+      color: #7a4a55;
+      font-size: 1rem;
+      padding: 40px 0;
+    }
+
+    /* כפתור אדמין נסתר */
+    .admin-toggle {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: none;
+      border: 1px solid #3a1a1a;
+      border-radius: 8px;
+      color: #3a1a1a;
+      font-family: 'Heebo', sans-serif;
+      font-size: .7rem;
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: all .2s;
+      z-index: 100;
+    }
+    .admin-toggle:hover { border-color: #5a2030; color: #5a2030; }
+  </style>
+</head>
+<body>
+
+<a href="meet-lea.html" class="back">← חזרה</a>
+
+<h1>📖 ספר זיכרונות</h1>
+<p class="subtitle">שתפו זיכרון, רגע, או מחשבה על סבתא לאה ז״ל</p>
+
+<!-- טופס כתיבת זיכרון -->
+<div class="write-box">
+  <h2>✍️ כתבו זיכרון</h2>
+  <div class="name-row">
+    <input type="text" id="authorInput" class="name-input" placeholder="השם שלכם (אופציונלי)" maxlength="50" />
+    <label class="anon-label">
+      <input type="checkbox" id="anonCheck" /> אנונימי
+    </label>
+  </div>
+  <textarea id="memoryText" placeholder="ספרו על זיכרון, רגע מיוחד, משהו שלמדתם ממנה..." maxlength="1000"></textarea>
+  <button class="submit-btn" id="submitBtn" onclick="submitMemory()">פרסמו זיכרון 💜</button>
+  <p class="success-msg" id="successMsg">✓ הזיכרון נשמר! תודה שחלקתם.</p>
+</div>
+
+<!-- רשימת זיכרונות -->
+<div class="memories-list" id="memoriesList">
+  <div class="loading">טוען זיכרונות...</div>
+</div>
+
+<!-- כפתור אדמין נסתר -->
+<button class="admin-toggle" onclick="toggleAdmin()">⚙</button>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  emailjs.init('_UZS3V-HK7gi-Ag9Z');
+</script>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, arrayUnion, arrayRemove, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBDS6gcfE_GMQdmmQwpyiQDGxq30hQboWI",
+    authDomain: "lea-memorial-97837.firebaseapp.com",
+    projectId: "lea-memorial-97837",
+    storageBucket: "lea-memorial-97837.firebasestorage.app",
+    messagingSenderId: "437790534848",
+    appId: "1:437790534848:web:89dcbfc0736435ee031125"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const ADMIN_PASSWORD = "leapeleg1935";
+  let isAdmin = false;
+  let userLikes = JSON.parse(localStorage.getItem('userLikes') || '[]');
+
+  // האזן לשינויים בזמן אמת
+  const q = query(collection(db, "memories"), orderBy("timestamp", "desc"));
+  onSnapshot(q, (snapshot) => {
+    renderMemories(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+  });
+
+  function renderMemories(memories) {
+    const list = document.getElementById('memoriesList');
+    if (memories.length === 0) {
+      list.innerHTML = '<div class="empty-state">עדיין אין זיכרונות — היו הראשונים לשתף 💜</div>';
+      return;
+    }
+
+    list.innerHTML = memories.map(m => {
+      const date = m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+      const likes = m.likes || 0;
+      const liked = userLikes.includes(m.id);
+      const replies = m.replies || [];
+
+      return `
+        <div class="memory-card ${isAdmin ? 'admin-mode' : ''}" id="card-${m.id}">
+          <div class="memory-header">
+            <span class="memory-author">${escapeHtml(m.author || 'אנונימי')}</span>
+            <span class="memory-date">${date}</span>
+          </div>
+          <div class="memory-text">${escapeHtml(m.text)}</div>
+          <div class="memory-actions">
+            <button class="like-btn ${liked ? 'liked' : ''}" onclick="toggleLike('${m.id}', ${likes}, ${liked})">
+              ♥ ${likes > 0 ? likes : ''} אהבתי
+            </button>
+            <button class="reply-btn" onclick="toggleReplyForm('${m.id}')">הגיבו</button>
+            <button class="delete-btn" onclick="deleteMemory('${m.id}')">🗑 מחק</button>
+          </div>
+          <div class="replies-list" id="replies-${m.id}">
+            ${replies.map(r => `
+              <div class="reply-card">
+                <div class="reply-author">${escapeHtml(r.author || 'אנונימי')}</div>
+                <div class="reply-text">${escapeHtml(r.text)}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="reply-form" id="replyform-${m.id}">
+            <input type="text" placeholder="השם שלכם (אופציונלי)" id="replyauthor-${m.id}" maxlength="50" />
+            <textarea placeholder="כתבו תגובה..." id="replytext-${m.id}" maxlength="500"></textarea>
+            <button class="reply-submit" onclick="submitReply('${m.id}')">שלחו תגובה</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.submitMemory = async function() {
+    const text = document.getElementById('memoryText').value.trim();
+    const anon = document.getElementById('anonCheck').checked;
+    const authorRaw = document.getElementById('authorInput').value.trim();
+    const author = anon ? 'אנונימי' : (authorRaw || 'אנונימי');
+
+    if (!text) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'שומר...';
+
+    try {
+      await addDoc(collection(db, "memories"), {
+        text,
+        author,
+        likes: 0,
+        replies: [],
+        timestamp: serverTimestamp()
+      });
+
+      // שליחת אימייל
+      emailjs.send('service_af2onws', 'q3z92df', {
+        from_name: author,
+        message: text,
+        name: author,
+        email: 'amitpeleg309@gmail.com'
+      }).catch(() => {});
+
+      document.getElementById('memoryText').value = '';
+      document.getElementById('authorInput').value = '';
+      document.getElementById('anonCheck').checked = false;
+      document.getElementById('successMsg').style.display = 'block';
+      setTimeout(() => { document.getElementById('successMsg').style.display = 'none'; }, 4000);
+    } catch(e) {
+      alert('שגיאה בשמירה, נסו שוב.');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'פרסמו זיכרון 💜';
+  };
+
+  window.toggleLike = async function(id, currentLikes, liked) {
+    const newLikes = liked ? currentLikes - 1 : currentLikes + 1;
+    if (liked) {
+      userLikes = userLikes.filter(l => l !== id);
+    } else {
+      userLikes.push(id);
+    }
+    localStorage.setItem('userLikes', JSON.stringify(userLikes));
+    await updateDoc(doc(db, "memories", id), { likes: newLikes });
+  };
+
+  window.toggleReplyForm = function(id) {
+    const form = document.getElementById('replyform-' + id);
+    form.classList.toggle('open');
+  };
+
+  window.submitReply = async function(id) {
+    const text = document.getElementById('replytext-' + id).value.trim();
+    const author = document.getElementById('replyauthor-' + id).value.trim() || 'אנונימי';
+    if (!text) return;
+
+    await updateDoc(doc(db, "memories", id), {
+      replies: arrayUnion({ author, text, time: new Date().toISOString() })
+    });
+
+    document.getElementById('replytext-' + id).value = '';
+    document.getElementById('replyauthor-' + id).value = '';
+    document.getElementById('replyform-' + id).classList.remove('open');
+  };
+
+  window.deleteMemory = async function(id) {
+    if (!isAdmin) return;
+    if (!confirm('למחוק את הזיכרון הזה?')) return;
+    await deleteDoc(doc(db, "memories", id));
+  };
+
+  window.toggleAdmin = function() {
+    if (isAdmin) {
+      isAdmin = false;
+      document.querySelectorAll('.memory-card').forEach(c => c.classList.remove('admin-mode'));
+      return;
+    }
+    const pw = prompt('סיסמת ניהול:');
+    if (pw === ADMIN_PASSWORD) {
+      isAdmin = true;
+      document.querySelectorAll('.memory-card').forEach(c => c.classList.add('admin-mode'));
+      alert('מצב ניהול פעיל — כפתורי מחיקה מופיעים על הזיכרונות.');
+    }
+  };
+
+  // אנונימי — נעל את שדה השם
+  document.getElementById('anonCheck').addEventListener('change', function() {
+    document.getElementById('authorInput').disabled = this.checked;
+    if (this.checked) document.getElementById('authorInput').value = '';
+  });
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+</script>
+
+</body>
+</html>
