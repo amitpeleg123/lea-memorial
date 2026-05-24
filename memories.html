@@ -479,7 +479,7 @@
       }).catch(() => {});
 
       // שליחת מייל
-      window.emailjs.send('service_af2onws', 'q3z92df', {
+      window.emailjs.send('service_af2onws', 'template_kohe6qf', {
         from_name: author,
         message: text.slice(0, 500)
       }).catch((err) => { console.error('EmailJS error:', JSON.stringify(err)); });
