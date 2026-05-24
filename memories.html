@@ -480,7 +480,7 @@
 
       // שליחת מייל
       window.emailjs.send('service_af2onws', 'q3z92df', {
-        author: author,
+        from_name: author,
         message: text.slice(0, 500)
       }).catch(() => {});
 
