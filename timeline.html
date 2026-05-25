@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ציר זמן — לאה פלג ז״ל</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #1a0a0a;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+    }
+
+    .back {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      color: #c47d8a;
+      text-decoration: none;
+      font-size: .95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+      z-index: 100;
+    }
+    .back:hover { color: #e8b4bc; }
+
+    h1 {
+      font-size: 2.4rem;
+      color: #e8b4bc;
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #c47d8a;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 60px;
+      font-weight: 300;
+    }
+
+    .timeline {
+      width: 100%;
+      max-width: 700px;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      right: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, transparent, #5a2030 10%, #5a2030 90%, transparent);
+      transform: translateX(50%);
+    }
+
+    .event {
+      display: flex;
+      justify-content: flex-end;
+      padding-left: 52%;
+      margin-bottom: 48px;
+      position: relative;
+    }
+
+    .event.left {
+      justify-content: flex-start;
+      padding-left: 0;
+      padding-right: 52%;
+    }
+
+    .dot {
+      position: absolute;
+      right: 50%;
+      top: 18px;
+      width: 14px;
+      height: 14px;
+      background: #c47d8a;
+      border-radius: 50%;
+      transform: translateX(50%);
+      border: 2px solid #1a0a0a;
+      box-shadow: 0 0 0 3px #5a2030;
+    }
+
+    .card {
+      background: #2a1010;
+      border: 1px solid #3a1a1a;
+      border-radius: 12px;
+      padding: 18px 22px;
+      max-width: 280px;
+      width: 100%;
+    }
+
+    .year {
+      color: #c47d8a;
+      font-size: .85rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+
+    .event-title {
+      color: #e8b4bc;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .event-desc {
+      color: #b08890;
+      font-size: .9rem;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .birth-card .dot { background: #e8b4bc; box-shadow: 0 0 0 3px #c47d8a; }
+    .death-card .dot { background: #7a3a4a; box-shadow: 0 0 0 3px #3a1a1a; }
+
+    @media (max-width: 600px) {
+      .timeline::before { right: 20px; transform: none; }
+      .event, .event.left {
+        padding-left: 50px;
+        padding-right: 0;
+        justify-content: flex-start;
+      }
+      .dot { right: 14px; transform: none; }
+      .card { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="meet-lea.html" class="back">→ חזרה</a>
+
+<h1>ציר זמן</h1>
+<p class="subtitle">90 שנות חיים של לאה פלג ז״ל</p>
+
+<div class="timeline">
+
+  <div class="event birth-card">
+    <div class="dot"></div>
+    <div class="card">
+      <div class="year">17 בספטמבר 1935</div>
+      <div class="event-title">לאה נולדה</div>
+      <div class="event-desc">י״ז אלול תרצ״ה — תחילת סיפור חיים של 90 שנה</div>
+    </div>
+  </div>
+
+  <div class="event left">
+    <div class="dot"></div>
+    <div class="card">
+      <div class="year">31 באוגוסט 1971</div>
+      <div class="event-title">עופר נולד</div>
+      <div class="event-desc">הבן הקטן של לאה — אבא של עמית</div>
+    </div>
+  </div>
+
+  <div class="event">
+    <div class="dot"></div>
+    <div class="card">
+      <div class="year">15 ביוני 2003</div>
+      <div class="event-title">עילי נולד</div>
+      <div class="event-desc">נכד — האח הגדול של עמית</div>
+    </div>
+  </div>
+
+  <div class="event left">
+    <div class="dot"></div>
+    <div class="card">
+      <div class="year">31 במאי 2006</div>
+      <div class="event-title">עלמה נולדה</div>
+      <div class="event-desc">נכדה — אחותו של עמית</div>
+    </div>
+  </div>
+
+  <div class="event">
+    <div class="dot"></div>
+    <div class="card">
+      <div class="year">30 בספטמבר 2010</div>
+      <div class="event-title">עמית נולד</div>
+      <div class="event-desc">נכד הזקונים — בנה את אתר הזיכרון הזה לכבודה</div>
+    </div>
+  </div>
+
+  <div class="event left death-card">
+    <div class="dot"></div>
+    <div class="card">
+      <div class="year">4 במרץ 2026</div>
+      <div class="event-title">לאה נפטרה</div>
+      <div class="event-desc">צלולה עד יומה האחרון, נפטרה בגיל 90 — זכרה לברכה</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
