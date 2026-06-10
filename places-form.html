@@ -53,21 +53,40 @@
       max-width: 640px;
     }
 
-    .name-input {
-      width: 100%;
+    .who-label {
+      color: #c47d8a;
+      font-size: .95rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .who-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .who-btn {
+      flex: 1;
+      min-width: 90px;
       background: #1a0a0a;
-      border: 1px solid #5a2030;
+      border: 2px solid #5a2030;
       border-radius: 10px;
       color: #f0e0d6;
       font-family: 'Heebo', sans-serif;
       font-size: 1rem;
-      padding: 10px 14px;
-      outline: none;
-      transition: border-color .2s;
-      margin-bottom: 14px;
+      font-weight: 700;
+      padding: 12px;
+      cursor: pointer;
+      transition: background .2s, border-color .2s, color .2s;
     }
-    .name-input:focus { border-color: #c47d8a; }
-    .name-input::placeholder { color: #7a4a55; }
+    .who-btn:hover { border-color: #c47d8a; }
+    .who-btn.selected {
+      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+      border-color: #c47d8a;
+      color: #fff;
+    }
 
     textarea {
       width: 100%;
@@ -121,7 +140,12 @@
 <p class="from">מאת עמית</p>
 
 <div class="write-box">
-  <input type="text" id="authorInput" class="name-input" placeholder="השם שלכם" maxlength="50" />
+  <p class="who-label">לחצו על מי שאתם:</p>
+  <div class="who-buttons">
+    <button class="who-btn" onclick="selectWho('עופר', this)">עופר</button>
+    <button class="who-btn" onclick="selectWho('עדי', this)">עדי</button>
+    <button class="who-btn" onclick="selectWho('ערן', this)">ערן</button>
+  </div>
   <textarea id="placesText" placeholder="כתבו כאן את כל המקומות המשמעותיים בחייה של סבתא לאה — שם המקום, אם אפשר גם כתובת, ולמה הוא היה משמעותי..." maxlength="3000"></textarea>
   <button class="submit-btn" id="submitBtn" onclick="submitPlaces()">שלחו ✉️</button>
   <p class="success-msg" id="successMsg">✓ תודה רבה! נשמר בהצלחה.</p>
@@ -144,12 +168,19 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  let selectedAuthor = '';
+  window.selectWho = function(name, btn) {
+    selectedAuthor = name;
+    document.querySelectorAll('.who-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  };
+
   window.submitPlaces = async function() {
-    const author = document.getElementById('authorInput').value.trim();
+    const author = selectedAuthor;
     const text = document.getElementById('placesText').value.trim();
 
     if (!author || !text) {
-      alert('נא למלא שם וגם את המקומות.');
+      alert('נא לבחור מי אתם ולמלא את המקומות.');
       return;
     }
 
@@ -172,6 +203,8 @@
 
       document.getElementById('placesText').value = '';
       document.getElementById('successMsg').style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'שלחו ✉️';
     } catch(e) {
       alert('שגיאה בשמירה, נסו שוב.');
       btn.disabled = false;
