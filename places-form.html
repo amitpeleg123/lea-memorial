@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>מקומות משמעותיים — לאה פלג ז״ל</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #1a0a0a;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      color: #e8b4bc;
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #c47d8a;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 12px;
+      font-weight: 300;
+      max-width: 500px;
+      line-height: 1.6;
+    }
+
+    .from {
+      color: #7a4a55;
+      font-size: .9rem;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .write-box {
+      background: #2a1010;
+      border: 1px solid #5a2030;
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .name-input {
+      width: 100%;
+      background: #1a0a0a;
+      border: 1px solid #5a2030;
+      border-radius: 10px;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color .2s;
+      margin-bottom: 14px;
+    }
+    .name-input:focus { border-color: #c47d8a; }
+    .name-input::placeholder { color: #7a4a55; }
+
+    textarea {
+      width: 100%;
+      background: #1a0a0a;
+      border: 1px solid #5a2030;
+      border-radius: 10px;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      padding: 14px;
+      resize: vertical;
+      min-height: 220px;
+      outline: none;
+      transition: border-color .2s;
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    textarea:focus { border-color: #c47d8a; }
+    textarea::placeholder { color: #7a4a55; }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .2s;
+    }
+    .submit-btn:hover { opacity: 0.85; }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .success-msg {
+      color: #a8d8a8;
+      font-size: .95rem;
+      margin-top: 12px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🗺️ מקומות משמעותיים בחיי סבתא לאה</h1>
+<p class="subtitle">
+  עמית בונה אתר זיכרון לסבתא לאה ז״ל, ורוצה לשים שם מפה עם מקומות משמעותיים מחייה.<br>
+  כתבו כל מקום שאתם זוכרים — איפה גרה, עבדה, נולדה, מקום שאהבה, ואם אפשר גם כתובת. כל פרט עוזר 💜
+</p>
+<p class="from">מאת עמית</p>
+
+<div class="write-box">
+  <input type="text" id="authorInput" class="name-input" placeholder="השם שלכם" maxlength="50" />
+  <textarea id="placesText" placeholder="כתבו כאן את כל המקומות המשמעותיים בחייה של סבתא לאה — שם המקום, אם אפשר גם כתובת, ולמה הוא היה משמעותי..." maxlength="3000"></textarea>
+  <button class="submit-btn" id="submitBtn" onclick="submitPlaces()">שלחו ✉️</button>
+  <p class="success-msg" id="successMsg">✓ תודה רבה! נשמר בהצלחה.</p>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBDS6gcfE_GMQdmmQwpyiQDGxq30hQboWI",
+    authDomain: "lea-memorial-97837.firebaseapp.com",
+    projectId: "lea-memorial-97837",
+    storageBucket: "lea-memorial-97837.firebasestorage.app",
+    messagingSenderId: "437790534848",
+    appId: "1:437790534848:web:89dcbfc0736435ee031125"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.submitPlaces = async function() {
+    const author = document.getElementById('authorInput').value.trim();
+    const text = document.getElementById('placesText').value.trim();
+
+    if (!author || !text) {
+      alert('נא למלא שם וגם את המקומות.');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'שולח...';
+
+    try {
+      await addDoc(collection(db, "places_submissions"), {
+        author,
+        text,
+        timestamp: serverTimestamp()
+      });
+
+      fetch(`https://ntfy.sh/leamemorialamit309`, {
+        method: 'POST',
+        body: `${author} שלח/ה מקומות משמעותיים:\n${text.slice(0, 200)}`,
+        headers: { 'Title': 'מקומות — תוכן חדש!', 'Priority': 'high', 'Tags': 'world_map' }
+      }).catch(() => {});
+
+      document.getElementById('placesText').value = '';
+      document.getElementById('successMsg').style.display = 'block';
+    } catch(e) {
+      alert('שגיאה בשמירה, נסו שוב.');
+      btn.disabled = false;
+      btn.textContent = 'שלחו ✉️';
+    }
+  };
+</script>
+
+</body>
+</html>

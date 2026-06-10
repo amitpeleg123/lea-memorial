@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>תוכן שהתקבל — לאה פלג ז״ל</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #1a0a0a;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      color: #e8b4bc;
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+
+    .lock-box {
+      background: #2a1010;
+      border: 1px solid #5a2030;
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .lock-box input {
+      width: 100%;
+      background: #1a0a0a;
+      border: 1px solid #5a2030;
+      border-radius: 10px;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      padding: 10px 14px;
+      outline: none;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    .lock-box button {
+      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .content { display: none; width: 100%; max-width: 700px; }
+    .content.open { display: block; }
+
+    .section-title {
+      color: #e8b4bc;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 36px 0 16px;
+      border-bottom: 1px solid #5a2030;
+      padding-bottom: 8px;
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    .item {
+      background: #2a1010;
+      border: 1px solid #5a2030;
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 14px;
+    }
+
+    .item-author {
+      font-weight: 700;
+      color: #c47d8a;
+      font-size: .95rem;
+      margin-bottom: 4px;
+    }
+
+    .item-date {
+      color: #7a4a55;
+      font-size: .8rem;
+      margin-bottom: 10px;
+    }
+
+    .item-text {
+      color: #f0e0d6;
+      font-size: 1rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .empty {
+      color: #7a4a55;
+      font-size: .95rem;
+      padding: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📋 תוכן שהתקבל</h1>
+
+<div class="lock-box" id="lockBox">
+  <input type="password" id="pwInput" placeholder="סיסמה" />
+  <button onclick="checkPassword()">כניסה</button>
+</div>
+
+<div class="content" id="content">
+  <div class="section-title">📖 סיפור החיים</div>
+  <div id="storyList"></div>
+
+  <div class="section-title">💬 ציטוטים</div>
+  <div id="quotesList"></div>
+
+  <div class="section-title">🗺️ מקומות</div>
+  <div id="placesList"></div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBDS6gcfE_GMQdmmQwpyiQDGxq30hQboWI",
+    authDomain: "lea-memorial-97837.firebaseapp.com",
+    projectId: "lea-memorial-97837",
+    storageBucket: "lea-memorial-97837.firebasestorage.app",
+    messagingSenderId: "437790534848",
+    appId: "1:437790534848:web:89dcbfc0736435ee031125"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const ADMIN_PASSWORD = "3009";
+
+  window.checkPassword = async function() {
+    const pw = document.getElementById('pwInput').value;
+    if (pw !== ADMIN_PASSWORD) {
+      alert('סיסמה שגויה');
+      return;
+    }
+    document.getElementById('lockBox').style.display = 'none';
+    document.getElementById('content').classList.add('open');
+    await loadAll();
+  };
+
+  document.getElementById('pwInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') window.checkPassword();
+  });
+
+  async function loadAll() {
+    await loadCollection('story_submissions', 'storyList');
+    await loadCollection('quotes_submissions', 'quotesList');
+    await loadCollection('places_submissions', 'placesList');
+  }
+
+  async function loadCollection(collectionName, elementId) {
+    const list = document.getElementById(elementId);
+    const q = query(collection(db, collectionName), orderBy('timestamp', 'desc'));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      list.innerHTML = '<div class="empty">עדיין לא התקבל תוכן.</div>';
+      return;
+    }
+
+    list.innerHTML = snapshot.docs.map(d => {
+      const data = d.data();
+      const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+      return `
+        <div class="item">
+          <div class="item-author">${escapeHtml(data.author)}</div>
+          <div class="item-date">${date}</div>
+          <div class="item-text">${escapeHtml(data.text)}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+</script>
+
+</body>
+</html>
