@@ -130,6 +130,9 @@
 
   <div class="section-title">🗺️ מקומות</div>
   <div id="placesList"></div>
+
+  <div class="section-title">💡 הצעות לאתר</div>
+  <div id="feedbackList"></div>
 </div>
 
 <!-- Firebase SDK -->
@@ -170,6 +173,7 @@
     await loadCollection('story_submissions', 'storyList');
     await loadCollection('quotes_submissions', 'quotesList');
     await loadCollection('places_submissions', 'placesList');
+    await loadCollection('feedback_submissions', 'feedbackList');
   }
 
   async function loadCollection(collectionName, elementId) {
