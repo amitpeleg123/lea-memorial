@@ -133,6 +133,9 @@
 
   <div class="section-title">💡 הצעות לאתר</div>
   <div id="feedbackList"></div>
+
+  <div class="section-title">💌 הקדשות</div>
+  <div id="dedicationList"></div>
 </div>
 
 <!-- Firebase SDK -->
@@ -174,6 +177,7 @@
     await loadCollection('quotes_submissions', 'quotesList');
     await loadCollection('places_submissions', 'placesList');
     await loadCollection('feedback_submissions', 'feedbackList');
+    await loadCollection('dedication_submissions', 'dedicationList');
   }
 
   async function loadCollection(collectionName, elementId) {

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>הקדשה — לאה פלג ז״ל</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #1a0a0a;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      color: #e8b4bc;
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #c47d8a;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 12px;
+      font-weight: 300;
+      max-width: 500px;
+      line-height: 1.6;
+    }
+
+    .from {
+      color: #7a4a55;
+      font-size: .9rem;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .write-box {
+      background: #2a1010;
+      border: 1px solid #5a2030;
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .who-label {
+      color: #c47d8a;
+      font-size: .95rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .who-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .who-btn {
+      flex: 0 1 calc(25% - 8px);
+      min-width: 70px;
+      background: #1a0a0a;
+      border: 2px solid #5a2030;
+      border-radius: 10px;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 12px;
+      cursor: pointer;
+      transition: background .2s, border-color .2s, color .2s;
+    }
+    .who-btn:hover { border-color: #c47d8a; }
+    .who-btn.selected {
+      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+      border-color: #c47d8a;
+      color: #fff;
+    }
+
+    textarea {
+      width: 100%;
+      background: #1a0a0a;
+      border: 1px solid #5a2030;
+      border-radius: 10px;
+      color: #f0e0d6;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      padding: 14px;
+      resize: vertical;
+      min-height: 180px;
+      outline: none;
+      transition: border-color .2s;
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+    textarea:focus { border-color: #c47d8a; }
+    textarea::placeholder { color: #7a4a55; }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .2s;
+    }
+    .submit-btn:hover { opacity: 0.85; }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .success-msg {
+      color: #a8d8a8;
+      font-size: .95rem;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .site-link-box {
+      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+      border-radius: 16px;
+      padding: 20px 28px;
+      width: 100%;
+      max-width: 640px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .site-link-box p {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .site-link-box a {
+      display: inline-block;
+      background: #1a0a0a;
+      color: #f0e0d6;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 10px 24px;
+      border-radius: 10px;
+      transition: opacity .2s;
+    }
+    .site-link-box a:hover { opacity: 0.85; }
+
+    .note {
+      color: #7a4a55;
+      font-size: .85rem;
+      text-align: center;
+      max-width: 640px;
+      line-height: 1.6;
+      margin-top: 18px;
+    }
+    .note a { color: #c47d8a; }
+  </style>
+</head>
+<body>
+
+<h1>💌 כתבו הקדשה לסבתא לאה</h1>
+<p class="subtitle">
+  בחרו את השם שלכם, וכתבו הקדשה אישית שתופיע בתשבץ ההקדשות באתר.<br>
+  אפשר לכתוב יותר מהקדשה אחת — פשוט היכנסו שוב, בחרו את השם שלכם וכתבו עוד אחת 💜
+</p>
+<p class="from">מאת עמית</p>
+
+<div class="site-link-box">
+  <p>הנה האתר 💜</p>
+  <a href="https://amitpeleg123.github.io/lea-memorial/dedications.html" target="_blank">לתשבץ ההקדשות</a>
+</div>
+
+<div class="write-box">
+  <p class="who-label">מי אתה?</p>
+  <div class="who-buttons" id="whoButtons"></div>
+  <textarea id="dedText" placeholder="תכתבו את הרגעים שאתם זוכרים עם סבתא ומה שאתם רוצים לכתוב בשבילה." maxlength="1000"></textarea>
+  <button class="submit-btn" id="submitBtn" onclick="submitDedication()">שלחו ✉️</button>
+  <p class="success-msg" id="successMsg">✓ תודה רבה! ההקדשה נשמרה ותופיע בתשבץ.</p>
+</div>
+
+<p class="note">
+  טעיתם וצריך לתקן או למחוק הקדשה שכבר נשלחה? כתבו לעמית דרך <a href="feedback-form.html">טופס ההצעות</a> מה לשנות.
+</p>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBDS6gcfE_GMQdmmQwpyiQDGxq30hQboWI",
+    authDomain: "lea-memorial-97837.firebaseapp.com",
+    projectId: "lea-memorial-97837",
+    storageBucket: "lea-memorial-97837.firebasestorage.app",
+    messagingSenderId: "437790534848",
+    appId: "1:437790534848:web:89dcbfc0736435ee031125"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const NAMES = ["מעיין","עלמה","עמית","עילית","ליהי","עופר","ענת","ענב","אפיק","קטי","ערן","עדי","עילי","גד"];
+
+  const whoButtons = document.getElementById('whoButtons');
+  NAMES.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'who-btn';
+    btn.textContent = name;
+    btn.onclick = () => selectWho(name, btn);
+    whoButtons.appendChild(btn);
+  });
+
+  let selectedAuthor = '';
+  function selectWho(name, btn) {
+    selectedAuthor = name;
+    document.querySelectorAll('.who-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  window.submitDedication = async function() {
+    const author = selectedAuthor;
+    const text = document.getElementById('dedText').value.trim();
+
+    if (!author || !text) {
+      alert('נא לבחור מי אתם ולכתוב הקדשה.');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'שולח...';
+
+    try {
+      await addDoc(collection(db, "dedication_submissions"), {
+        author,
+        text,
+        timestamp: serverTimestamp()
+      });
+
+      fetch(`https://ntfy.sh/leamemorialamit309`, {
+        method: 'POST',
+        body: `${author} שלח/ה הקדשה:\n${text.slice(0, 200)}`,
+        headers: { 'Title': 'הקדשה חדשה!', 'Priority': 'high', 'Tags': 'love_letter' }
+      }).catch(() => {});
+
+      document.getElementById('dedText').value = '';
+      document.getElementById('successMsg').style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'שלחו ✉️';
+    } catch(e) {
+      alert('שגיאה בשמירה, נסו שוב.');
+      btn.disabled = false;
+      btn.textContent = 'שלחו ✉️';
+    }
+  };
+</script>
+
+</body>
+</html>

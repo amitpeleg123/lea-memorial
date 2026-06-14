@@ -46,7 +46,8 @@
       position:relative; box-shadow:0 8px 40px #00000099; text-align:center;
     }
     .modal-name { font-size:2rem; color:#e8b4bc; font-weight:900; margin-bottom:20px; }
-    .modal-ded { color:#f0e0d6; line-height:1.9; font-size:1rem; font-style:italic; }
+    .modal-ded { color:#f0e0d6; line-height:1.9; font-size:1rem; font-style:italic; white-space:pre-wrap; }
+    .modal-ded + .modal-ded { margin-top:18px; padding-top:18px; border-top:1px solid #5a2030; }
     .close-btn { position:absolute; top:14px; left:14px; background:none; border:none; color:#c47d8a; font-size:1.5rem; cursor:pointer; }
     footer { margin-top:40px; color:#5a1e28; font-size:.8rem; }
   </style>
@@ -70,6 +71,17 @@
      onmouseout="this.style.borderColor='#7b1e2e';this.style.boxShadow='none'">
     📋 ראו את כל ההקדשות ברשימה
   </a>
+  <a href="dedication-form.html" style="
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 28px; margin-right: 10px;
+    background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+    border: none; border-radius: 10px;
+    color: #fff; font-family: 'Heebo', sans-serif;
+    font-size: 1rem; font-weight: 700; text-decoration: none;
+    transition: opacity .2s;
+  " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+    💌 כתבו הקדשה משלכם
+  </a>
 </div>
 
 <div class="grid-wrap"><table id="tbl"></table></div>
@@ -80,11 +92,26 @@
   <div class="modal-box">
     <button class="close-btn" onclick="closeModal()">✕</button>
     <div class="modal-name" id="mname"></div>
-    <div class="modal-ded" id="mded"></div>
+    <div id="mded"></div>
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBDS6gcfE_GMQdmmQwpyiQDGxq30hQboWI",
+  authDomain: "lea-memorial-97837.firebaseapp.com",
+  projectId: "lea-memorial-97837",
+  storageBucket: "lea-memorial-97837.firebasestorage.app",
+  messagingSenderId: "437790534848",
+  appId: "1:437790534848:web:89dcbfc0736435ee031125"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+
 // גריד LTR פנימי, dir=rtl על הטבלה → col=0 מוצג ימינה
 // across: col גדל = שמאל בתצוגה → תו ראשון של מילה = col נמוך = ימין בתצוגה ✓
 // down: row גדל = למטה ✓
@@ -239,10 +266,41 @@ function highlightPerson(p){
 }
 function openModal(p){
   document.getElementById('mname').textContent=p.name;
-  document.getElementById('mded').textContent=p.ded;
+  const mded=document.getElementById('mded');
+  mded.innerHTML='';
+  const dedications=p.dedications&&p.dedications.length?p.dedications:[p.ded];
+  dedications.forEach(text=>{
+    const div=document.createElement('div');
+    div.className='modal-ded';
+    div.textContent=text;
+    mded.appendChild(div);
+  });
   document.getElementById('modal').classList.add('open');
 }
 function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+// טען הקדשות אמיתיות מ-Firebase ועדכן את ה-PEOPLE
+(async function loadDedications(){
+  try{
+    const q=query(collection(db,'dedication_submissions'),orderBy('timestamp','asc'));
+    const snapshot=await getDocs(q);
+    const byName={};
+    snapshot.forEach(doc=>{
+      const data=doc.data();
+      if(!data.author||!data.text) return;
+      if(!byName[data.author]) byName[data.author]=[];
+      byName[data.author].push(data.text);
+    });
+    PEOPLE.forEach(p=>{
+      if(byName[p.name]&&byName[p.name].length){
+        p.dedications=byName[p.name];
+        p.ded=byName[p.name][0];
+      }
+    });
+  }catch(e){
+    console.error('שגיאה בטעינת הקדשות',e);
+  }
+})();
 </script>
 </body>
 </html>
