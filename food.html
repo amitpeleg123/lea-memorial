@@ -21,15 +21,20 @@
 
     .back {
       position: fixed;
-      top: 20px;
-      right: 24px;
-      color: #c47d8a;
+      top: 16px;
+      right: 16px;
+      z-index: 100;
+      color: #f0e0d6;
       text-decoration: none;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 700;
-      transition: color .2s;
+      background: #3d0c14;
+      border: 1.5px solid #7b1e2e;
+      border-radius: 10px;
+      padding: 10px 18px;
+      transition: border-color .2s, box-shadow .2s;
     }
-    .back:hover { color: #e8b4bc; }
+    .back:hover { border-color: #c47d8a; box-shadow: 0 4px 16px #7b1e2e55; }
 
     h1 {
       font-size: 2.2rem;

@@ -21,18 +21,23 @@
 
     .back {
       position: fixed;
-      top: 20px;
-      right: 24px;
-      color: #c47d8a;
+      top: 16px;
+      right: 16px;
+      color: #f0e0d6;
       text-decoration: none;
-      font-size: .95rem;
+      font-size: 1.15rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: color .2s;
+      background: #3d0c14;
+      border: 1.5px solid #7b1e2e;
+      border-radius: 10px;
+      padding: 10px 18px;
+      transition: border-color .2s, box-shadow .2s;
       z-index: 100;
     }
-    .back:hover { color: #e8b4bc; }
+    .back:hover { border-color: #c47d8a; box-shadow: 0 4px 16px #7b1e2e55; }
 
     h1 {
       font-size: 2.4rem;
