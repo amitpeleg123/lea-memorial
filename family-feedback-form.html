@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>הקדשה — לאה פלג ז״ל</title>
+  <title>הצעות לאתר — לאה פלג ז״ל</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -98,7 +98,7 @@
       font-size: 1rem;
       padding: 14px;
       resize: vertical;
-      min-height: 180px;
+      min-height: 220px;
       outline: none;
       transition: border-color .2s;
       margin-bottom: 16px;
@@ -158,29 +158,28 @@
       transition: opacity .2s;
     }
     .site-link-box a:hover { opacity: 0.85; }
-
   </style>
 </head>
 <body>
 
-<h1>💌 כתבו הקדשה לסבתא לאה</h1>
+<h1>💡 הצעות ושינויים לאתר</h1>
 <p class="subtitle">
-  בחרו את השם שלכם, וכתבו הקדשה אישית שתופיע בתשבץ ההקדשות באתר.<br>
-  אפשר לכתוב יותר מהקדשה אחת — פשוט היכנסו שוב, בחרו את השם שלכם וכתבו עוד אחת 💜
+  ראיתם את האתר של סבתא לאה ויש לכם רעיון, תיקון או דבר שכדאי לשנות?<br>
+  כתבו כאן ועמית יעבור על זה 💜
 </p>
 <p class="from">מאת עמית</p>
 
 <div class="site-link-box">
   <p>הנה האתר 💜</p>
-  <a href="https://amitpeleg123.github.io/lea-memorial/" target="_blank">לאתר הזיכרון</a>
+  <a href="https://amitpeleg123.github.io/lea-memorial/" target="_blank">כנסו לאתר של סבתא לאה</a>
 </div>
 
 <div class="write-box">
   <p class="who-label">מי אתה?</p>
   <div class="who-buttons" id="whoButtons"></div>
-  <textarea id="dedText" placeholder="תכתבו את הרגעים שאתם זוכרים עם סבתא ומה שאתם רוצים לכתוב בשבילה." maxlength="1000"></textarea>
-  <button class="submit-btn" id="submitBtn" onclick="submitDedication()">שלחו ✉️</button>
-  <p class="success-msg" id="successMsg">✓ תודה רבה! ההקדשה נשמרה ותופיע בתשבץ.</p>
+  <textarea id="feedbackText" placeholder="כתבו כאן מה כדאי לשנות, להוסיף או לתקן באתר..." maxlength="3000"></textarea>
+  <button class="submit-btn" id="submitBtn" onclick="submitFeedback()">שלחו ✉️</button>
+  <p class="success-msg" id="successMsg">✓ תודה רבה! נשמר בהצלחה.</p>
 </div>
 
 <!-- Firebase SDK -->
@@ -218,12 +217,12 @@
     btn.classList.add('selected');
   }
 
-  window.submitDedication = async function() {
+  window.submitFeedback = async function() {
     const author = selectedAuthor;
-    const text = document.getElementById('dedText').value.trim();
+    const text = document.getElementById('feedbackText').value.trim();
 
     if (!author || !text) {
-      alert('נא לבחור מי אתם ולכתוב הקדשה.');
+      alert('נא לבחור מי אתם ולכתוב את ההצעה.');
       return;
     }
 
@@ -232,7 +231,7 @@
     btn.textContent = 'שולח...';
 
     try {
-      await addDoc(collection(db, "dedication_submissions"), {
+      await addDoc(collection(db, "family_feedback_submissions"), {
         author,
         text,
         timestamp: serverTimestamp()
@@ -240,11 +239,11 @@
 
       fetch(`https://ntfy.sh/leamemorialamit309`, {
         method: 'POST',
-        body: `${author} שלח/ה הקדשה:\n${text.slice(0, 200)}`,
-        headers: { 'Title': 'הקדשה חדשה!', 'Priority': 'high', 'Tags': 'love_letter' }
+        body: `${author} שלח/ה הצעה לאתר:\n${text.slice(0, 200)}`,
+        headers: { 'Title': 'הצעות לאתר — תוכן חדש!', 'Priority': 'high', 'Tags': 'bulb' }
       }).catch(() => {});
 
-      document.getElementById('dedText').value = '';
+      document.getElementById('feedbackText').value = '';
       document.getElementById('successMsg').style.display = 'block';
       btn.disabled = false;
       btn.textContent = 'שלחו ✉️';
