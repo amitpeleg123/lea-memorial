@@ -160,14 +160,31 @@
     .site-link-box a:hover { opacity: 0.85; }
 
     .note {
-      color: #7a4a55;
-      font-size: .85rem;
-      text-align: center;
+      background: #2a1010;
+      border: 1px solid #5a2030;
+      border-radius: 16px;
+      padding: 18px 28px;
+      width: 100%;
       max-width: 640px;
+      text-align: center;
+      margin-top: 24px;
+      color: #c47d8a;
+      font-size: .9rem;
       line-height: 1.6;
-      margin-top: 18px;
     }
-    .note a { color: #c47d8a; }
+    .note a {
+      display: inline-block;
+      margin-top: 10px;
+      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: .95rem;
+      padding: 8px 20px;
+      border-radius: 10px;
+      transition: opacity .2s;
+    }
+    .note a:hover { opacity: 0.85; }
   </style>
 </head>
 <body>
@@ -181,7 +198,7 @@
 
 <div class="site-link-box">
   <p>הנה האתר 💜</p>
-  <a href="https://amitpeleg123.github.io/lea-memorial/dedications.html" target="_blank">לתשבץ ההקדשות</a>
+  <a href="https://amitpeleg123.github.io/lea-memorial/" target="_blank">לאתר הזיכרון</a>
 </div>
 
 <div class="write-box">
@@ -192,9 +209,10 @@
   <p class="success-msg" id="successMsg">✓ תודה רבה! ההקדשה נשמרה ותופיע בתשבץ.</p>
 </div>
 
-<p class="note">
-  טעיתם וצריך לתקן או למחוק הקדשה שכבר נשלחה? כתבו לעמית דרך <a href="feedback-form.html">טופס ההצעות</a> מה לשנות.
-</p>
+<div class="note">
+  יש לכם הצעות, תיקונים, או רוצים למחוק הקדשה שכבר נשלחה?<br>
+  <a href="feedback-form.html" target="_blank">לטופס ההצעות</a>
+</div>
 
 <!-- Firebase SDK -->
 <script type="module">
