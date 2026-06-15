@@ -223,30 +223,34 @@ PEOPLE.forEach(p=>{
 // בנה טבלה
 const tbl=document.getElementById('tbl');
 const cellEls=Array.from({length:ROWS},()=>Array(COLS).fill(null));
-for(let r=0;r<ROWS;r++){
-  const tr=document.createElement('tr');
-  for(let c=0;c<COLS;c++){
-    const td=document.createElement('td');
-    const cd=G[r][c];
-    if(cd){
-      td.className='w';
-      td.textContent=cd.letter;
-      if(cd.num){ const sp=document.createElement('span'); sp.className='cnum'; sp.textContent=cd.num; td.appendChild(sp); }
-      if(cd.people.length) td.addEventListener('click',()=>{highlightPerson(cd.people[0]);openModal(cd.people[0]);});
-      cellEls[r][c]=td;
+function buildGrid(){
+  for(let r=0;r<ROWS;r++){
+    const tr=document.createElement('tr');
+    for(let c=0;c<COLS;c++){
+      const td=document.createElement('td');
+      const cd=G[r][c];
+      if(cd){
+        td.className='w';
+        td.textContent=cd.letter;
+        if(cd.num){ const sp=document.createElement('span'); sp.className='cnum'; sp.textContent=cd.num; td.appendChild(sp); }
+        if(cd.people.length) td.addEventListener('click',()=>{highlightPerson(cd.people[0]);openModal(cd.people[0]);});
+        cellEls[r][c]=td;
+      }
+      tr.appendChild(td);
     }
-    tr.appendChild(td);
+    tbl.appendChild(tr);
   }
-  tbl.appendChild(tr);
 }
 
 const namesEl=document.getElementById('names');
-PEOPLE.forEach(p=>{
-  const btn=document.createElement('button');
-  btn.className='name-btn'; btn.textContent=p.name;
-  btn.addEventListener('click',()=>{highlightPerson(p);openModal(p);});
-  namesEl.appendChild(btn);
-});
+function buildNames(){
+  PEOPLE.forEach(p=>{
+    const btn=document.createElement('button');
+    btn.className='name-btn'; btn.textContent=p.name;
+    btn.addEventListener('click',()=>{highlightPerson(p);openModal(p);});
+    namesEl.appendChild(btn);
+  });
+}
 
 let litCells=[];
 function highlightPerson(p){
@@ -273,8 +277,9 @@ function openModal(p){
   document.getElementById('modal').classList.add('open');
 }
 function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+window.closeModal = closeModal;
 
-// טען הקדשות אמיתיות מ-Firebase ועדכן את ה-PEOPLE
+// טען הקדשות אמיתיות מ-Firebase ועדכן את ה-PEOPLE, ואז בנה את התשבץ
 (async function loadDedications(){
   try{
     const q=query(collection(db,'dedication_submissions'),orderBy('timestamp','asc'));
@@ -295,6 +300,8 @@ function closeModal(){ document.getElementById('modal').classList.remove('open')
   }catch(e){
     console.error('שגיאה בטעינת הקדשות',e);
   }
+  buildGrid();
+  buildNames();
 })();
 </script>
 </body>
