@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ספר זיכרונות — לאה פלג ז״ל</title>
+  <title>כתבו לה משהו בעצמכם — לאה פלג ז״ל</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -336,8 +336,8 @@
 
 <a href="meet-lea.html" class="back">← חזרה</a>
 
-<h1>📖 ספר זיכרונות</h1>
-<p class="subtitle">שתפו זיכרון, רגע, או מחשבה על סבתא לאה ז״ל</p>
+<h1>📖 כתבו לה משהו בעצמכם</h1>
+<p class="subtitle">זיכרון, רגע, מחשבה, או כמה מילים לסבתא לאה ז״ל</p>
 
 <!-- טופס כתיבת זיכרון -->
 <div class="write-box">
@@ -463,7 +463,7 @@
       fetch(`https://ntfy.sh/leamemorialamit309`, {
         method: 'POST',
         body: `זיכרון חדש מ-${author}:\n${text.slice(0, 200)}`,
-        headers: { 'Title': 'ספר זיכרונות — זיכרון חדש!', 'Priority': 'high', 'Tags': 'book' }
+        headers: { 'Title': 'כתבו לה משהו בעצמכם — זיכרון חדש!', 'Priority': 'high', 'Tags': 'book' }
       }).catch(() => {});
 
       // שליחת מייל
