@@ -9,8 +9,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: #1a0a0a;
-      color: #f0e0d6;
+      background-color: #5c0707;
+      color: #e8e0d6;
       font-family: 'Heebo', sans-serif;
       min-height: 100vh;
       display: flex;
@@ -21,7 +21,7 @@
 
     h1 {
       font-size: 2.2rem;
-      color: #e8b4bc;
+      color: #f5ede2;
       text-align: center;
       margin-bottom: 30px;
       font-weight: 700;
@@ -39,10 +39,10 @@
 
     .lock-box input {
       width: 100%;
-      background: #1a0a0a;
+      background: #5c0707;
       border: 1px solid #5a2030;
       border-radius: 10px;
-      color: #f0e0d6;
+      color: #e8e0d6;
       font-family: 'Heebo', sans-serif;
       font-size: 1rem;
       padding: 10px 14px;
@@ -52,7 +52,7 @@
     }
 
     .lock-box button {
-      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+      background: linear-gradient(135deg, #f5ede2, #d4c4b4);
       color: #fff;
       border: none;
       border-radius: 10px;
@@ -68,7 +68,7 @@
     .content.open { display: block; }
 
     .section-title {
-      color: #e8b4bc;
+      color: #f5ede2;
       font-size: 1.4rem;
       font-weight: 700;
       margin: 36px 0 16px;
@@ -87,7 +87,7 @@
 
     .item-author {
       font-weight: 700;
-      color: #c47d8a;
+      color: #d4c4b4;
       font-size: .95rem;
       margin-bottom: 4px;
     }
@@ -99,7 +99,7 @@
     }
 
     .item-text {
-      color: #f0e0d6;
+      color: #e8e0d6;
       font-size: 1rem;
       line-height: 1.7;
       white-space: pre-wrap;
@@ -109,6 +109,46 @@
       color: #7a4a55;
       font-size: .95rem;
       padding: 10px 0;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .item-actions button {
+      background: #3a1820;
+      color: #f5ede2;
+      border: 1px solid #5a2030;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-family: 'Heebo', sans-serif;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .item-actions button.delete-btn {
+      color: #f0a0a0;
+    }
+
+    .item-actions button:hover {
+      opacity: .8;
+    }
+
+    .edit-textarea {
+      width: 100%;
+      background: #5c0707;
+      border: 1px solid #5a2030;
+      border-radius: 10px;
+      color: #e8e0d6;
+      font-family: 'Heebo', sans-serif;
+      font-size: 1rem;
+      line-height: 1.7;
+      padding: 10px 14px;
+      margin-top: 10px;
+      resize: vertical;
     }
   </style>
 </head>
@@ -144,7 +184,7 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, query, orderBy, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBDS6gcfE_GMQdmmQwpyiQDGxq30hQboWI",
@@ -198,10 +238,14 @@
       const data = d.data();
       const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
       return `
-        <div class="item">
+        <div class="item" data-collection="${collectionName}" data-id="${d.id}">
           <div class="item-author">${escapeHtml(data.author)}</div>
           <div class="item-date">${date}</div>
           <div class="item-text">${escapeHtml(data.text)}</div>
+          <div class="item-actions">
+            <button class="edit-btn" onclick="startEdit(this)">עריכה</button>
+            <button class="delete-btn" onclick="deleteItem(this)">מחיקה</button>
+          </div>
         </div>
       `;
     }).join('');
@@ -213,6 +257,67 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  window.startEdit = function(btn) {
+    const item = btn.closest('.item');
+    const textEl = item.querySelector('.item-text');
+    if (item.querySelector('.edit-textarea')) return; // already editing
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'edit-textarea';
+    textarea.value = textEl.textContent;
+    textarea.rows = Math.max(4, Math.ceil(textarea.value.length / 50));
+
+    const actions = item.querySelector('.item-actions');
+    actions.innerHTML = `
+      <button onclick="saveEdit(this)">שמירה</button>
+      <button onclick="cancelEdit(this)">ביטול</button>
+    `;
+    textEl.style.display = 'none';
+    textEl.insertAdjacentElement('afterend', textarea);
+  };
+
+  window.cancelEdit = function(btn) {
+    const item = btn.closest('.item');
+    const textEl = item.querySelector('.item-text');
+    item.querySelector('.edit-textarea').remove();
+    textEl.style.display = '';
+    resetActions(item);
+  };
+
+  window.saveEdit = async function(btn) {
+    const item = btn.closest('.item');
+    const collectionName = item.dataset.collection;
+    const docId = item.dataset.id;
+    const textarea = item.querySelector('.edit-textarea');
+    const newText = textarea.value;
+
+    await updateDoc(doc(db, collectionName, docId), { text: newText });
+
+    const textEl = item.querySelector('.item-text');
+    textEl.textContent = newText;
+    textEl.style.display = '';
+    textarea.remove();
+    resetActions(item);
+  };
+
+  window.deleteItem = async function(btn) {
+    if (!confirm('למחוק את ההקדשה הזו לתמיד?')) return;
+    const item = btn.closest('.item');
+    const collectionName = item.dataset.collection;
+    const docId = item.dataset.id;
+
+    await deleteDoc(doc(db, collectionName, docId));
+    item.remove();
+  };
+
+  function resetActions(item) {
+    const actions = item.querySelector('.item-actions');
+    actions.innerHTML = `
+      <button class="edit-btn" onclick="startEdit(this)">עריכה</button>
+      <button class="delete-btn" onclick="deleteItem(this)">מחיקה</button>
+    `;
   }
 </script>
 

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ציטוטים של סבתא לאה</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #5c0707;
+      color: #e8e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+    }
+
+    .back {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 100;
+      color: #e8e0d6;
+      text-decoration: none;
+      font-size: 1.15rem;
+      font-weight: 700;
+      background: #3d0c14;
+      border: 1.5px solid #f5ede2;
+      border-radius: 10px;
+      padding: 10px 18px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .back:hover { border-color: #d4c4b4; box-shadow: 0 4px 16px #f5ede255; }
+
+    h1 {
+      font-size: 2.2rem;
+      color: #f5ede2;
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #d4c4b4;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 50px;
+      font-weight: 300;
+      max-width: 500px;
+      line-height: 1.6;
+    }
+
+    .quotes-list {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .quote-card {
+      background: #2a1010;
+      border: 1px solid #5a2030;
+      border-radius: 16px;
+      padding: 28px 32px;
+      position: relative;
+    }
+
+    .quote-mark {
+      font-size: 4rem;
+      color: #5a2030;
+      line-height: 1;
+      font-family: Georgia, serif;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      opacity: 0.6;
+    }
+
+    .quote-text {
+      font-size: 1.2rem;
+      color: #f5ede2;
+      line-height: 1.8;
+      font-weight: 400;
+      white-space: pre-wrap;
+      padding-top: 20px;
+    }
+
+    .quote-author {
+      margin-top: 16px;
+      color: #7a4a55;
+      font-size: 1rem;
+      text-align: left;
+    }
+
+    .loading {
+      color: #7a4a55;
+      font-size: 1rem;
+      margin-top: 40px;
+    }
+
+    .empty {
+      color: #7a4a55;
+      font-size: 1rem;
+      text-align: center;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <a class="back" href="meet-lea.html">← חזרה</a>
+
+  <h1>💬 מה סבתא לאה אמרה</h1>
+  <p class="subtitle">משפטים וביטויים שסבתא לאה הייתה אומרת הרבה, כפי שזכרו בניה</p>
+
+  <div class="quotes-list" id="quotesList">
+    <p class="loading">טוען...</p>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBDS6gcfE_GMQdmmQwpyiQDGxq30hQboWI",
+    authDomain: "lea-memorial-97837.firebaseapp.com",
+    projectId: "lea-memorial-97837",
+    storageBucket: "lea-memorial-97837.firebasestorage.app",
+    messagingSenderId: "437790534848",
+    appId: "1:437790534848:web:89dcbfc0736435ee031125"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const list = document.getElementById('quotesList');
+
+  try {
+    const q = query(collection(db, 'quotes_submissions'), orderBy('timestamp', 'asc'));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      list.innerHTML = '<p class="empty">עדיין לא נוספו ציטוטים.</p>';
+    } else {
+      list.innerHTML = snapshot.docs.map(d => {
+        const data = d.data();
+        const lines = data.text.trim().split('\n').filter(l => l.trim());
+        return lines.map(line => `
+          <div class="quote-card">
+            <div class="quote-mark">"</div>
+            <div class="quote-text">${escapeHtml(line.replace(/^[-–—•]\s*/, ''))}</div>
+            <div class="quote-author">— ${escapeHtml(data.author || '')} (הבן שלה)</div>
+          </div>
+        `).join('');
+      }).join('');
+    }
+  } catch(e) {
+    list.innerHTML = '<p class="empty">שגיאה בטעינה, נסו לרענן.</p>';
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+</script>
+
+</body>
+</html>
