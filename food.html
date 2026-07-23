@@ -9,8 +9,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: #1a0a0a;
-      color: #f0e0d6;
+      background-color: #5c0707;
+      color: #e8e0d6;
       font-family: 'Heebo', sans-serif;
       min-height: 100vh;
       display: flex;
@@ -24,28 +24,28 @@
       top: 16px;
       right: 16px;
       z-index: 100;
-      color: #f0e0d6;
+      color: #e8e0d6;
       text-decoration: none;
       font-size: 1.15rem;
       font-weight: 700;
       background: #3d0c14;
-      border: 1.5px solid #7b1e2e;
+      border: 1.5px solid #f5ede2;
       border-radius: 10px;
       padding: 10px 18px;
       transition: border-color .2s, box-shadow .2s;
     }
-    .back:hover { border-color: #c47d8a; box-shadow: 0 4px 16px #7b1e2e55; }
+    .back:hover { border-color: #d4c4b4; box-shadow: 0 4px 16px #f5ede255; }
 
     h1 {
       font-size: 2.2rem;
-      color: #e8b4bc;
+      color: #f5ede2;
       text-align: center;
       margin-bottom: 10px;
       font-weight: 700;
     }
 
     .subtitle {
-      color: #c47d8a;
+      color: #d4c4b4;
       font-size: 1rem;
       text-align: center;
       margin-bottom: 48px;
@@ -63,9 +63,9 @@
     .card {
       width: 180px;
       height: 180px;
-      border: 2px solid #7b1e2e;
+      border: 2px solid #5c0707;
       border-radius: 14px;
-      background: linear-gradient(135deg, #3d0c14, #2a0810);
+      background: #ffffff;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -78,8 +78,8 @@
 
     .card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 12px 36px #7b1e2e55;
-      border-color: #c47d8a;
+      box-shadow: 0 12px 36px #5c070755;
+      border-color: #910a0a;
     }
 
     .card-icon { font-size: 2.4rem; }
@@ -87,14 +87,14 @@
     .card-name {
       font-size: 1.1rem;
       font-weight: 700;
-      color: #e8b4bc;
+      color: #5c0707;
       text-align: center;
       padding: 0 8px;
     }
 
     .card-sub {
       font-size: 0.78rem;
-      color: #c47d8a;
+      color: #8a5a5a;
       font-weight: 300;
       text-align: center;
       padding: 0 8px;
@@ -114,8 +114,8 @@
     .modal.open { display: flex; }
 
     .modal-box {
-      background: linear-gradient(135deg, #3d0c14, #2a0810);
-      border: 2px solid #7b1e2e;
+      background: #ffffff;
+      border: 2px solid #5c0707;
       border-radius: 14px;
       padding: 40px;
       max-width: 460px;
@@ -129,20 +129,20 @@
 
     .modal-name {
       font-size: 1.8rem;
-      color: #e8b4bc;
+      color: #5c0707;
       font-weight: 900;
       margin-bottom: 8px;
     }
 
     .modal-origin {
       font-size: 0.85rem;
-      color: #c47d8a;
+      color: #8a5a5a;
       margin-bottom: 20px;
       font-style: italic;
     }
 
     .modal-recipe {
-      color: #f0e0d6;
+      color: #4a3c2c;
       line-height: 1.9;
       font-size: 0.95rem;
     }
@@ -153,11 +153,11 @@
       left: 14px;
       background: none;
       border: none;
-      color: #c47d8a;
+      color: #8a5a5a;
       font-size: 1.5rem;
       cursor: pointer;
     }
-    .close-btn:hover { color: #e8b4bc; }
+    .close-btn:hover { color: #5c0707; }
 
     footer {
       position: fixed;
@@ -200,7 +200,7 @@
         icon: '🍝',
         name: 'לזניה של סבתא',
         origin: 'מסורת המשפחה',
-        recipe: 'המתכון יתווסף בקרוב... 🕯️'
+        recipe: `<strong>מצרכים (8-10 מנות):</strong><br>• 200 גרם איטריות רחבות<br>• 2 קופסאות קטנות של רסק עגבניות<br>• חצי כוס מים<br>• 2 שיני שום כתושות<br>• 1 כפית מלח<br>• חצי כפית פלפל<br>• 1 כפית אורגנו<br>• 2 גביעי גבינת קוטג'<br>• 2 ביצים<br>• 1 כף פטרוסלינון קצוץ<br>• 200 גרם גבינה קשה צהובה בפרוסות<br><br><strong>הוראות הכנה:</strong><br>1. בשלי את האיטריות הרחבות במי מלח רותחים בסיר גדול עד שתתרככנה. סנני את האיטריות ושטפי אותן במים קרים בתוך מסננת.<br>2. הכיני את רוטב העגבניות: ערבבי את הרסק עם המים. הוסיפי את השום, המלח, הפלפל והאורגנו.<br>3. הכיני תערובת גבינה: ערבבי את גבינת הקוטג' עם הביצים והפטרוסלינון הקצוץ. טעמי ותבלי לטעמך במלח ופלפל.<br>4. הרכיבי את הלזניה: בתבנית אפייה מלבנית בגודל 20x25 ס"מ, ערכי מחצית מכמות האיטריות. מעליה מרחי מחצית תערובת הגבינה, צקי מחצית כמות הרוטב, ומעליו מחצית פרוסות הגבינה. חזרי על הפעולה: איטריות, גבינה, רוטב עגבניות ופרוסות גבינה פיקנטית.<br>5. חממי תנור בחום בינוני-גבוה. הכניסי את התבנית למרכז התנור ואפי כחצי שעה. הוציאי מהתנור והמתיני 10 דקות ואז חתכי למנות מרובעות והגישי חם.<br><br><em>ניתן להכין שעות מספר לפני ההגשה ולאכסן במקרר.</em>`
       },
       {
         icon: '🍚',
@@ -233,7 +233,7 @@
       document.getElementById('micon').textContent = f.icon;
       document.getElementById('mname').textContent = f.name;
       document.getElementById('morigin').textContent = f.origin;
-      document.getElementById('mrecipe').textContent = f.recipe;
+      document.getElementById('mrecipe').innerHTML = f.recipe;
       document.getElementById('modal').classList.add('open');
     }
 
