@@ -9,8 +9,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: #1a0a0a;
-      color: #f0e0d6;
+      background-color: #5c0707;
+      color: #e8e0d6;
       font-family: 'Heebo', sans-serif;
       min-height: 100vh;
       display: flex;
@@ -24,28 +24,28 @@
       top: 16px;
       right: 16px;
       z-index: 100;
-      color: #f0e0d6;
+      color: #e8e0d6;
       text-decoration: none;
       font-size: 1.15rem;
       font-weight: 700;
       background: #3d0c14;
-      border: 1.5px solid #7b1e2e;
+      border: 1.5px solid #f5ede2;
       border-radius: 10px;
       padding: 10px 18px;
       transition: border-color .2s, box-shadow .2s;
     }
-    .back:hover { border-color: #c47d8a; box-shadow: 0 4px 16px #7b1e2e55; }
+    .back:hover { border-color: #d4c4b4; box-shadow: 0 4px 16px #f5ede255; }
 
     h1 {
       font-size: 2.2rem;
-      color: #e8b4bc;
+      color: #f5ede2;
       text-align: center;
       margin-bottom: 10px;
       font-weight: 700;
     }
 
     .subtitle {
-      color: #c47d8a;
+      color: #d4c4b4;
       font-size: 1rem;
       text-align: center;
       margin-bottom: 48px;
@@ -63,9 +63,9 @@
     .card {
       width: 160px;
       height: 160px;
-      border: 2px solid #7b1e2e;
+      border: 2px solid #5c0707;
       border-radius: 14px;
-      background: linear-gradient(135deg, #3d0c14, #2a0810);
+      background: #ffffff;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -73,7 +73,7 @@
       gap: 10px;
       cursor: pointer;
       text-decoration: none;
-      color: #f0e0d6;
+      color: #5c0707;
       transition: transform .2s, box-shadow .2s, border-color .2s;
       box-shadow: 0 4px 20px #00000055;
       position: relative;
@@ -81,8 +81,8 @@
 
     .card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 12px 36px #7b1e2e55;
-      border-color: #c47d8a;
+      box-shadow: 0 12px 36px #5c070755;
+      border-color: #910a0a;
     }
 
     .card.soon {
@@ -96,7 +96,7 @@
     .card-text {
       font-size: .95rem;
       text-align: center;
-      color: #e8b4bc;
+      color: #5c0707;
       font-weight: 700;
       padding: 0 8px;
     }
@@ -105,7 +105,7 @@
       position: absolute;
       bottom: 10px;
       font-size: 0.7rem;
-      color: #7b1e2e;
+      color: #5c0707;
       font-weight: 700;
       letter-spacing: 1px;
     }
@@ -149,10 +149,9 @@
       <span class="card-text">גלריה</span>
     </div>
 
-    <div class="card soon">
-      <span class="card-icon">💬</span>
-      <span class="card-text">ציטוטים</span>
-      <span class="soon-badge">בקרוב</span>
+    <div class="card" onclick="location.href='quotes.html'">
+  <span class="card-icon">💬</span>
+  <span class="card-text">ציטוטים</span>
     </div>
 
     <a class="card" href="food.html">
