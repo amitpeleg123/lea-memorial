@@ -5,12 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>מקומות משמעותיים — לאה פלג ז״ל</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script>emailjs.init('_UZS3V-HK7gi-Ag9Z');</script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: #1a0a0a;
-      color: #f0e0d6;
+      background-color: #5c0707;
+      color: #e8e0d6;
       font-family: 'Heebo', sans-serif;
       min-height: 100vh;
       display: flex;
@@ -21,14 +23,14 @@
 
     h1 {
       font-size: 2.2rem;
-      color: #e8b4bc;
+      color: #f5ede2;
       text-align: center;
       margin-bottom: 10px;
       font-weight: 700;
     }
 
     .subtitle {
-      color: #c47d8a;
+      color: #d4c4b4;
       font-size: 1rem;
       text-align: center;
       margin-bottom: 12px;
@@ -54,7 +56,7 @@
     }
 
     .who-label {
-      color: #c47d8a;
+      color: #d4c4b4;
       font-size: .95rem;
       margin-bottom: 10px;
       font-weight: 700;
@@ -70,10 +72,10 @@
     .who-btn {
       flex: 1;
       min-width: 90px;
-      background: #1a0a0a;
+      background: #5c0707;
       border: 2px solid #5a2030;
       border-radius: 10px;
-      color: #f0e0d6;
+      color: #e8e0d6;
       font-family: 'Heebo', sans-serif;
       font-size: 1rem;
       font-weight: 700;
@@ -81,19 +83,19 @@
       cursor: pointer;
       transition: background .2s, border-color .2s, color .2s;
     }
-    .who-btn:hover { border-color: #c47d8a; }
+    .who-btn:hover { border-color: #d4c4b4; }
     .who-btn.selected {
-      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
-      border-color: #c47d8a;
+      background: linear-gradient(135deg, #f5ede2, #d4c4b4);
+      border-color: #d4c4b4;
       color: #fff;
     }
 
     textarea {
       width: 100%;
-      background: #1a0a0a;
+      background: #5c0707;
       border: 1px solid #5a2030;
       border-radius: 10px;
-      color: #f0e0d6;
+      color: #e8e0d6;
       font-family: 'Heebo', sans-serif;
       font-size: 1rem;
       padding: 14px;
@@ -104,11 +106,11 @@
       margin-bottom: 16px;
       line-height: 1.7;
     }
-    textarea:focus { border-color: #c47d8a; }
+    textarea:focus { border-color: #d4c4b4; }
     textarea::placeholder { color: #7a4a55; }
 
     .submit-btn {
-      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+      background: linear-gradient(135deg, #f5ede2, #d4c4b4);
       color: #fff;
       border: none;
       border-radius: 10px;
@@ -130,7 +132,7 @@
     }
 
     .site-link-box {
-      background: linear-gradient(135deg, #7b1e2e, #c47d8a);
+      background: linear-gradient(135deg, #f5ede2, #d4c4b4);
       border-radius: 16px;
       padding: 20px 28px;
       width: 100%;
@@ -148,8 +150,8 @@
 
     .site-link-box a {
       display: inline-block;
-      background: #1a0a0a;
-      color: #f0e0d6;
+      background: #5c0707;
+      color: #e8e0d6;
       text-decoration: none;
       font-weight: 700;
       font-size: 1rem;
@@ -234,6 +236,11 @@
         method: 'POST',
         body: `${author} שלח/ה מקומות משמעותיים:\n${text.slice(0, 200)}`,
         headers: { 'Title': 'מקומות — תוכן חדש!', 'Priority': 'high', 'Tags': 'world_map' }
+      }).catch(() => {});
+
+      emailjs.send('service_af2onws', 'template_kohe6qf', {
+        from_name: author,
+        message: `מקומות משמעותיים — תוכן חדש!\n\n${text}`
       }).catch(() => {});
 
       document.getElementById('placesText').value = '';
