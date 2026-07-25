@@ -8,53 +8,54 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #1a0a0a; color: #f0e0d6;
+      background: #5c0707; color: #e8e0d6;
       font-family: 'Heebo', sans-serif;
       min-height: 100vh; display: flex; flex-direction: column;
       align-items: center; padding: 60px 20px;
     }
     .back {
       position:fixed; top:16px; right:16px; z-index:100;
-      color:#f0e0d6; text-decoration:none; font-size:1.15rem; font-weight:700;
-      background:#3d0c14; border:1.5px solid #7b1e2e; border-radius:10px;
+      color:#e8e0d6; text-decoration:none; font-size:1.15rem; font-weight:700;
+      background:#3d0c14; border:1.5px solid #f5ede2; border-radius:10px;
       padding:10px 18px;
       transition: border-color .2s, box-shadow .2s;
     }
-    .back:hover { border-color:#c47d8a; box-shadow:0 4px 16px #7b1e2e55; }
-    h1 { font-size:2rem; color:#e8b4bc; margin-bottom:8px; font-weight:700; }
-    .subtitle { color:#c47d8a; font-size:.95rem; margin-bottom:40px; }
+    .back:hover { border-color:#d4c4b4; box-shadow:0 4px 16px #f5ede255; }
+    h1 { font-size:2rem; color:#f5ede2; margin-bottom:8px; font-weight:700; }
+    .subtitle { color:#d4c4b4; font-size:.95rem; margin-bottom:40px; }
     .grid-wrap { overflow-x:auto; margin-bottom:40px; }
     table { border-collapse:collapse; direction:rtl; }
     td { width:46px; height:46px; background:#0e0404; padding:0; border:none; }
     td.w {
-      background:#fdf0f0; border:1px solid #c8a0a8;
-      text-align:center; font-size:1.2rem; font-weight:700; color:#3d0c14;
+      background:#ffffff; border:1px solid #5c0707;
+      text-align:center; font-size:1.2rem; font-weight:700; color:#5c0707;
       position:relative; cursor:pointer; transition:background .15s;
     }
-    td.w:hover { background:#f5c8ce; }
-    td.w.lit { background:#e8a0aa; }
-    .cnum { position:absolute; top:2px; right:3px; font-size:.5rem; color:#7b1e2e; font-weight:700; }
+    td.w:hover { background:#f8e4e4; }
+    td.w.lit { background:#f0d8d8; }
+    .cnum { position:absolute; top:2px; right:3px; font-size:.5rem; color:#5c0707; font-weight:700; }
     .names-grid { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:700px; margin-bottom:20px; }
     .name-btn {
       padding:10px 22px;
-      background:linear-gradient(135deg,#3d0c14,#2a0810);
-      border:1.5px solid #7b1e2e; border-radius:8px;
-      color:#e8b4bc; font-family:'Heebo',sans-serif;
+      background:#ffffff;
+      border:1.5px solid #5c0707; border-radius:8px;
+      color:#5c0707; font-family:'Heebo',sans-serif;
       font-size:1rem; font-weight:700; cursor:pointer; transition:all .15s;
     }
-    .name-btn:hover, .name-btn.active { background:#7b1e2e; color:#fdf0f0; border-color:#e8b4bc; }
+    .name-btn:hover, .name-btn.active { background:#5c0707; color:#ffffff; border-color:#5c0707; }
     .modal { display:none; position:fixed; inset:0; background:#000b; z-index:100; align-items:center; justify-content:center; padding:20px; }
     .modal.open { display:flex; }
     .modal-box {
-      background:linear-gradient(135deg,#3d0c14,#2a0810);
-      border:2px solid #7b1e2e; border-radius:14px;
-      padding:40px; max-width:460px; width:100%;
+      background:#ffffff;
+      border:2px solid #5c0707; border-radius:14px;
+      padding:40px; max-width:680px; width:100%;
+      max-height:85vh; overflow-y:auto;
       position:relative; box-shadow:0 8px 40px #00000099; text-align:center;
     }
-    .modal-name { font-size:2rem; color:#e8b4bc; font-weight:900; margin-bottom:20px; }
-    .modal-ded { color:#f0e0d6; line-height:1.9; font-size:1rem; font-style:italic; white-space:pre-wrap; }
-    .modal-ded + .modal-ded { margin-top:18px; padding-top:18px; border-top:1px solid #5a2030; }
-    .close-btn { position:absolute; top:14px; left:14px; background:none; border:none; color:#c47d8a; font-size:1.5rem; cursor:pointer; }
+    .modal-name { font-size:2rem; color:#5c0707; font-weight:900; margin-bottom:20px; }
+    .modal-ded { color:#4a3c2c; line-height:2; font-size:1.15rem; font-style:italic; white-space:pre-wrap; }
+    .modal-ded + .modal-ded { margin-top:18px; padding-top:18px; border-top:1px solid #d8c4c4; }
+    .close-btn { position:absolute; top:14px; left:14px; background:none; border:none; color:#8a5a5a; font-size:1.5rem; cursor:pointer; }
     footer { margin-top:40px; color:#5a1e28; font-size:.8rem; }
   </style>
 </head>
@@ -68,13 +69,13 @@
   <a href="dedications-list.html" style="
     display: inline-flex; align-items: center; gap: 10px;
     padding: 12px 28px;
-    background: linear-gradient(135deg, #3d0c14, #2a0810);
-    border: 1.5px solid #7b1e2e; border-radius: 10px;
-    color: #e8b4bc; font-family: 'Heebo', sans-serif;
+    background: #ffffff;
+    border: 1.5px solid #5c0707; border-radius: 10px;
+    color: #5c0707; font-family: 'Heebo', sans-serif;
     font-size: 1rem; font-weight: 700; text-decoration: none;
     transition: border-color .2s, box-shadow .2s;
-  " onmouseover="this.style.borderColor='#c47d8a';this.style.boxShadow='0 4px 20px #7b1e2e55'"
-     onmouseout="this.style.borderColor='#7b1e2e';this.style.boxShadow='none'">
+  " onmouseover="this.style.borderColor='#910a0a';this.style.boxShadow='0 4px 20px #5c070755'"
+     onmouseout="this.style.borderColor='#5c0707';this.style.boxShadow='none'">
     📋 ראו את כל ההקדשות ברשימה
   </a>
 </div>
