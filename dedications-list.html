@@ -9,8 +9,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: #1a0a0a;
-      color: #f0e0d6;
+      background-color: #5c0707;
+      color: #e8e0d6;
       font-family: 'Heebo', sans-serif;
       min-height: 100vh;
       display: flex;
@@ -24,7 +24,7 @@
       top: 16px;
       right: 16px;
       z-index: 100;
-      color: #f0e0d6;
+      color: #e8e0d6;
       text-decoration: none;
       font-size: 1.15rem;
       font-weight: 700;
@@ -32,23 +32,23 @@
       align-items: center;
       gap: 6px;
       background: #3d0c14;
-      border: 1.5px solid #7b1e2e;
+      border: 1.5px solid #f5ede2;
       border-radius: 10px;
       padding: 10px 18px;
       transition: border-color .2s, box-shadow .2s;
     }
-    .back:hover { border-color: #c47d8a; box-shadow: 0 4px 16px #7b1e2e55; }
+    .back:hover { border-color: #d4c4b4; box-shadow: 0 4px 16px #f5ede255; }
 
     h1 {
       font-size: 2.4rem;
-      color: #e8b4bc;
+      color: #f5ede2;
       text-align: center;
       margin-bottom: 10px;
       font-weight: 700;
     }
 
     .subtitle {
-      color: #c47d8a;
+      color: #d4c4b4;
       font-size: 1rem;
       text-align: center;
       margin-bottom: 48px;
@@ -66,24 +66,24 @@
     .card {
       width: 150px;
       height: 150px;
-      border: 2px solid #7b1e2e;
+      border: 2px solid #5c0707;
       border-radius: 14px;
-      background: linear-gradient(135deg, #3d0c14, #2a0810);
+      background: #ffffff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 14px;
       cursor: pointer;
-      color: #f0e0d6;
+      color: #5c0707;
       transition: transform .2s, box-shadow .2s, border-color .2s;
       box-shadow: 0 4px 20px #00000055;
     }
 
     .card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 12px 36px #7b1e2e55;
-      border-color: #c47d8a;
+      box-shadow: 0 12px 36px #5c070755;
+      border-color: #910a0a;
     }
 
     .card-icon { font-size: 2rem; }
@@ -91,13 +91,13 @@
     .card-name {
       font-size: 1.3rem;
       font-weight: 700;
-      color: #e8b4bc;
+      color: #5c0707;
       text-align: center;
     }
 
     .card-hint {
       font-size: 0.78rem;
-      color: #c47d8a;
+      color: #8a5a5a;
       font-weight: 300;
     }
 
@@ -115,8 +115,8 @@
     .modal.open { display: flex; }
 
     .modal-box {
-      background: linear-gradient(135deg, #3d0c14, #2a0810);
-      border: 2px solid #7b1e2e;
+      background: #ffffff;
+      border: 2px solid #5c0707;
       border-radius: 14px;
       padding: 40px;
       max-width: 460px;
@@ -128,13 +128,13 @@
 
     .modal-name {
       font-size: 2rem;
-      color: #e8b4bc;
+      color: #5c0707;
       font-weight: 900;
       margin-bottom: 20px;
     }
 
     .modal-ded {
-      color: #f0e0d6;
+      color: #4a3c2c;
       line-height: 1.9;
       font-size: 1rem;
       font-style: italic;
@@ -143,7 +143,7 @@
     .modal-ded + .modal-ded {
       margin-top: 18px;
       padding-top: 18px;
-      border-top: 1px solid #5a2030;
+      border-top: 1px solid #d8c4c4;
     }
 
     .close-btn {
@@ -152,11 +152,11 @@
       left: 14px;
       background: none;
       border: none;
-      color: #c47d8a;
+      color: #8a5a5a;
       font-size: 1.5rem;
       cursor: pointer;
     }
-    .close-btn:hover { color: #e8b4bc; }
+    .close-btn:hover { color: #5c0707; }
 
     footer {
       position: fixed;

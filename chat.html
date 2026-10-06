@@ -209,7 +209,9 @@
     window.extraKnowledgeReady = (async () => {
       const dedications = await loadCollectionAsText('dedication_submissions', 'הקדשות שהמשפחה כתבה לסבתא לאה');
       const memories = await loadCollectionAsText('memories', 'זיכרונות שהמשפחה כתבה על סבתא לאה');
-      return dedications + memories;
+      const stories = await loadCollectionAsText('story_submissions', 'סיפור חיים של לאה פלג כפי שסיפרו בניה');
+      const quotes = await loadCollectionAsText('quotes_submissions', 'משפטים וציטוטים שלאה פלג הייתה אומרת');
+      return dedications + memories + stories + quotes;
     })();
   </script>
 

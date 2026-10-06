@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>הכר את לאה</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #5c0707;
+      color: #e8e0d6;
+      font-family: 'Heebo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+    }
+
+    .back {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 100;
+      color: #e8e0d6;
+      text-decoration: none;
+      font-size: 1.15rem;
+      font-weight: 700;
+      background: #3d0c14;
+      border: 1.5px solid #f5ede2;
+      border-radius: 10px;
+      padding: 10px 18px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .back:hover { border-color: #d4c4b4; box-shadow: 0 4px 16px #f5ede255; }
+
+    h1 {
+      font-size: 2.2rem;
+      color: #f5ede2;
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #d4c4b4;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 48px;
+      font-weight: 300;
+    }
+
+    .cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 860px;
+    }
+
+    .card {
+      width: 160px;
+      height: 160px;
+      border: 2px solid #5c0707;
+      border-radius: 14px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: #5c0707;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      box-shadow: 0 4px 20px #00000055;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 36px #5c070755;
+      border-color: #910a0a;
+    }
+
+    .card.soon {
+      opacity: 0.45;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .card-icon { font-size: 2rem; }
+
+    .card-text {
+      font-size: .95rem;
+      text-align: center;
+      color: #5c0707;
+      font-weight: 700;
+      padding: 0 8px;
+    }
+
+    .soon-badge {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.7rem;
+      color: #5c0707;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 20px;
+      color: #5a1e28;
+      font-size: .8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <a class="back" href="index.html">← חזרה</a>
+
+  <h1>הכר את לאה</h1>
+  <p class="subtitle">בחר איך תרצה להכיר אותה</p>
+
+  <div class="cards">
+
+    <a class="card" href="chat.html">
+      <span class="card-icon">💬</span>
+      <span class="card-text">שאל שאלות</span>
+    </a>
+
+    <div class="card soon">
+      <span class="card-icon">📖</span>
+      <span class="card-text">סיפור החיים</span>
+      <span class="soon-badge">בקרוב</span>
+    </div>
+
+    <div class="card" onclick="location.href='timeline.html'">
+      <span class="card-icon">🕰️</span>
+      <span class="card-text">ציר זמן</span>
+      <span class="soon-badge">בקרוב</span>
+    </div>
+
+    <div class="card" onclick="location.href='gallery.html'">
+      <span class="card-icon">🖼️</span>
+      <span class="card-text">גלריה</span>
+    </div>
+
+    <div class="card soon">
+      <span class="card-icon">💬</span>
+      <span class="card-text">ציטוטים</span>
+      <span class="soon-badge">בקרוב</span>
+    </div>
+
+    <a class="card" href="food.html">
+      <span class="card-icon">🍲</span>
+      <span class="card-text">מה בישלה</span>
+    </a>
+
+    <div class="card soon">
+      <span class="card-icon">🗺️</span>
+      <span class="card-text">מפה</span>
+      <span class="soon-badge">בקרוב</span>
+    </div>
+
+    <a class="card" href="memories.html">
+      <span class="card-icon">📚</span>
+      <span class="card-text">כתבו לה משהו בעצמכם</span>
+    </a>
+
+  </div>
+
+  <footer>לזכר נשמתה הטהורה ✦</footer>
+
+</body>
+</html>

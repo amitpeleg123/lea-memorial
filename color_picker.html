@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>תשבץ הקדשות - אפור מול לבן</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Heebo', sans-serif;
+      background: #f4f0ec;
+      padding: 30px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .instructions {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: center;
+    }
+
+    .option {
+      width: 380px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+    }
+
+    .option-label {
+      text-align: center;
+      padding: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      background: #fff;
+      color: #333;
+    }
+
+    .preview {
+      background-color: #5c0707;
+      color: #e8e0d6;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 12px;
+      text-align: center;
+    }
+
+    h2.title { font-size:1.3rem; color:#f5ede2; margin-bottom:4px; font-weight:700; }
+    .subtitle { color:#d4c4b4; font-size:.75rem; margin-bottom:16px; }
+
+    table { border-collapse:collapse; direction:rtl; margin-bottom: 16px; }
+    td { width:24px; height:24px; padding:0; border:none; }
+
+    /* גריד אפור (נוכחי) */
+    .grey-empty { background:#0e0404; }
+    .grey-w {
+      background:#fdf0f0; border:1px solid #c8a0a8;
+      text-align:center; font-size:.65rem; font-weight:700; color:#3d0c14;
+    }
+    .grey-w.active { background:#e8a0aa; }
+
+    /* גריד לבן */
+    .white-empty { background:#3a0303; }
+    .white-w {
+      background:#ffffff; border:1px solid #5c0707;
+      text-align:center; font-size:.65rem; font-weight:700; color:#5c0707;
+    }
+    .white-w.active { background:#f0d8d8; }
+
+    .names-grid { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; max-width:340px; margin-bottom:16px; }
+    .name-btn {
+      padding:6px 12px;
+      font-family:'Heebo',sans-serif;
+      font-size:.7rem; font-weight:700; cursor:default;
+      border-radius:6px;
+    }
+    /* כפתורי שמות - אפור */
+    .grey-btn { background:linear-gradient(135deg,#3a332e,#221e1a); border:1.5px solid #f5ede2; color:#f5ede2; }
+    .grey-btn.active { background:#f5ede2; color:#3a332e; border-color:#f5ede2; }
+    /* כפתורי שמות - לבן */
+    .white-btn { background:#ffffff; border:1.5px solid #5c0707; color:#5c0707; }
+    .white-btn.active { background:#5c0707; color:#ffffff; border-color:#5c0707; }
+
+    /* מודאל ההקדשה */
+    .modal-box {
+      border-radius:12px; padding:20px; max-width:280px; width:100%;
+      position:relative; text-align:center; margin-top: 10px;
+    }
+    .grey-modal { background:linear-gradient(135deg,#3a332e,#221e1a); border:2px solid #f5ede2; }
+    .white-modal { background:#ffffff; border:2px solid #5c0707; }
+
+    .modal-name-grey { font-size:1.2rem; color:#f5ede2; font-weight:900; margin-bottom:10px; }
+    .modal-name-white { font-size:1.2rem; color:#5c0707; font-weight:900; margin-bottom:10px; }
+
+    .modal-ded-grey { color:#e8e0d6; line-height:1.6; font-size:.8rem; font-style:italic; }
+    .modal-ded-white { color:#4a3c2c; line-height:1.6; font-size:.8rem; font-style:italic; }
+
+  </style>
+</head>
+<body>
+
+  <h1>תשבץ ההקדשות - אפור מול לבן</h1>
+  <p class="instructions">מציג: התשבץ, רשימת השמות, ולחיצה על "עמית" שמראה את ההקדשה</p>
+
+  <div class="options">
+
+    <!-- אפור -->
+    <div class="option">
+      <div class="preview">
+        <h2 class="title">הקדשות</h2>
+        <p class="subtitle">לחצו על שם כדי לקרוא את ההקדשה</p>
+
+        <table>
+          <tr>
+            <td class="grey-w">מ</td><td class="grey-empty"></td><td class="grey-w">ע</td><td class="grey-empty"></td><td class="grey-w active">ע</td>
+          </tr>
+          <tr>
+            <td class="grey-empty"></td><td class="grey-w">ל</td><td class="grey-empty"></td><td class="grey-w">ע</td><td class="grey-w active">מ</td>
+          </tr>
+          <tr>
+            <td class="grey-w">ע</td><td class="grey-empty"></td><td class="grey-w">י</td><td class="grey-empty"></td><td class="grey-w active">י</td>
+          </tr>
+          <tr>
+            <td class="grey-empty"></td><td class="grey-w">פ</td><td class="grey-empty"></td><td class="grey-w">ל</td><td class="grey-w active">ת</td>
+          </tr>
+        </table>
+
+        <div class="names-grid">
+          <div class="name-btn grey-btn active">עמית</div>
+          <div class="name-btn grey-btn">עלמה</div>
+          <div class="name-btn grey-btn">עילית</div>
+          <div class="name-btn grey-btn">מעיין</div>
+          <div class="name-btn grey-btn">עופר</div>
+        </div>
+
+        <div class="modal-box grey-modal">
+          <div class="modal-name-grey">עמית</div>
+          <div class="modal-ded-grey">"הייתי בכיתה ט', במצגת בגרות באנגלית על סבא שנפל במלחמת יום הכיפורים... ימים אחרונים לפני שנפטרה..."</div>
+        </div>
+
+      </div>
+      <div class="option-label">אפור (נוכחי)</div>
+    </div>
+
+    <!-- לבן -->
+    <div class="option">
+      <div class="preview">
+        <h2 class="title">הקדשות</h2>
+        <p class="subtitle">לחצו על שם כדי לקרוא את ההקדשה</p>
+
+        <table>
+          <tr>
+            <td class="white-w">מ</td><td class="white-empty"></td><td class="white-w">ע</td><td class="white-empty"></td><td class="white-w active">ע</td>
+          </tr>
+          <tr>
+            <td class="white-empty"></td><td class="white-w">ל</td><td class="white-empty"></td><td class="white-w">ע</td><td class="white-w active">מ</td>
+          </tr>
+          <tr>
+            <td class="white-w">ע</td><td class="white-empty"></td><td class="white-w">י</td><td class="white-empty"></td><td class="white-w active">י</td>
+          </tr>
+          <tr>
+            <td class="white-empty"></td><td class="white-w">פ</td><td class="white-empty"></td><td class="white-w">ל</td><td class="white-w active">ת</td>
+          </tr>
+        </table>
+
+        <div class="names-grid">
+          <div class="name-btn white-btn active">עמית</div>
+          <div class="name-btn white-btn">עלמה</div>
+          <div class="name-btn white-btn">עילית</div>
+          <div class="name-btn white-btn">מעיין</div>
+          <div class="name-btn white-btn">עופר</div>
+        </div>
+
+        <div class="modal-box white-modal">
+          <div class="modal-name-white">עמית</div>
+          <div class="modal-ded-white">"הייתי בכיתה ט', במצגת בגרות באנגלית על סבא שנפל במלחמת יום הכיפורים... ימים אחרונים לפני שנפטרה..."</div>
+        </div>
+
+      </div>
+      <div class="option-label">לבן</div>
+    </div>
+
+  </div>
+
+</body>
+</html>
